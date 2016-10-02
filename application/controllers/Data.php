@@ -44,13 +44,16 @@ class Data extends CI_Controller{
         if($this->session->userdata("login_id_user") != null && $this->session->userdata("login_level") != null){
             if($this->session->userdata("login_level") == FIELD_CODE_GURU){
                 $this->db->where("id_guru",$this->session->userdata("login_id_user"));
+                $this->db->group_by("id_mata_pelajaran,id_kelas");
                 $this->db->order_by("id","DESC");
                 $asg = $this->db->get("as_assign_guru_kelas");
                 if($asg->num_rows() > 0){
-                    $dassign = $asg->result();
+                    $dassign = $asg->result();                    
                     for($i = 0;$i < count($data);$i++){
+//                        echo "Search ".$data[$i]->id." in \$dassign with iduser ".$this->session->userdata("login_id_user");
                         $in = search_where($data[$i]->id, $dassign, "id_kelas");
-                        if($in >= 0){
+//                        echo ": found $in<br>";
+                        if($in >= 0){                            
                             $data[$i]->aux = array(
                               "assignclass"=>$dassign[$in]->id  
                             );
@@ -77,11 +80,7 @@ class Data extends CI_Controller{
             
             $data[$i]->nama_kelas = getTingkat($data[$i]->nama_kelas, $data[$i]->tahun_masuk);
             
-            $data[$i]->action = array(
-                array(
-                    "link_caption"=>"Lihat Nilai",
-                    "link"=>  site_url("data/inputnilai/".  urlencode(base64_encode($data[$i]->id)))
-                ),
+            $data[$i]->action = array(                
                 array(
                     "link_caption"=>"Lihat Daftar Siswa",
                     "link"=>  site_url("data/siswa/?kelas=".  urlencode(base64_encode($data[$i]->id)))
@@ -90,6 +89,18 @@ class Data extends CI_Controller{
                     "link"=>  site_url("data/kelas/?hapuskelas=".  urlencode(base64_encode($data[$i]->id)))
                 )
             );
+            
+            if(isset($data[$i]->aux)){
+                if(isset($data[$i]->aux["assignclass"])){
+                    array_push($data[$i]->action,array(
+                        "link_caption"=>"Lihat Nilai",
+                        "link"=>  site_url("data/inputnilai/?k=".  urlencode(base64_encode($data[$i]->aux["assignclass"])))
+                    ));
+                }
+            }
+            
+            //remove aux field
+            unset($data[$i]->aux);
         }
         
         
@@ -97,7 +108,7 @@ class Data extends CI_Controller{
             "fields"=>$fields,
             "fcaption"=>$field_captions,
             "data"=>$data,
-            "table_title"=>"Daftar Kelas",
+            "table_title"=>"Daftar Kelas".($bysemester != null?" Angkatan ".$bysemester:""),
             "form"=>  ViewAdapter::getFormByTableName($table)
         );
         $this->load->view("component/header",array("contain"=>true));
@@ -106,9 +117,7 @@ class Data extends CI_Controller{
         
         $this->load->view("component/footer");
     }
-    function destroysession(){
-        $this->session->sess_destroy();
-    }
+   
     function semester(){
         $limit = returnDefaultIfNull($this->input->get("show"), 10);
         $search = returnDefaultIfNull($this->input->get("search"), null);
@@ -142,13 +151,6 @@ class Data extends CI_Controller{
                 array(
                     "link_caption"=>"Lihat Kelas",
                     "link"=>  site_url("data/kelas/?smt=".  $data[$i]->tahun_masuk)
-                ),
-                array(
-                    "link_caption"=>"Lihat Daftar Siswa",
-                    "link"=>  site_url("data/siswa/?kelas=".  urlencode(base64_encode($data[$i]->id)))
-                ),array(
-                    "link_caption"=>"Hapus Kelas",
-                    "link"=>  site_url("data/kelas/?hapuskelas=".  urlencode(base64_encode($data[$i]->id)))
                 )
             );
         }
@@ -577,6 +579,15 @@ class Data extends CI_Controller{
             show_custom_error("User selain user guru tidak memiliki wewenang untuk mengakses halaman ini", "Silahkan login sebagai guru");
             return;
         }
+        if($this->input->post("smt") != null){
+            $this->session->set_userdata("assignnilai_smtselection", base64_decode($this->input->post("smt")));
+        }
+        if($this->input->post("kelas") != null){
+            $this->session->set_userdata("assignnilai_selection",  base64_decode($this->input->post("kelas")));
+        } 
+        if($this->input->get("k") != null){
+            $this->session->set_userdata("assignnilai_selection",  base64_decode($this->input->get("k")));
+        } 
         $this->db
              ->select("a.*,b.nama_kelas,b.tahun_masuk,c.nama_mata_pelajaran,d.nomor_semester")
              ->from("as_assign_guru_kelas a")
@@ -593,12 +604,7 @@ class Data extends CI_Controller{
             return;
         }
         
-        if($this->input->post("smt") != null){
-            $this->session->set_userdata("assignnilai_smtselection", base64_decode($this->input->post("smt")));
-        }
-        if($this->input->post("kelas") != null){
-            $this->session->set_userdata("assignnilai_selection",  base64_decode($this->input->post("kelas")));
-        }                        
+        
         
         $inputclass_selection = $this->session->userdata("assignnilai_selection");
         
@@ -682,7 +688,8 @@ class Data extends CI_Controller{
         if($data->num_rows() < 1 && $initial_inserted == false){
             $i = search_where($inputclass_selection, $data_assign, "id");
             if($i < 0){
-                echo "Terjadi Kesalahan Sistem!","Error message data(658)";                
+                show_custom_error("Terjadi Kesalahan Sistem!","Error message data(695)");                
+                return;
             }
             
             $idmapel = $data_assign[$i]->id_mata_pelajaran;

@@ -26,9 +26,11 @@
 				$udt = getUserData();
 				$udt->nama = isset($udt->nama_guru)? $udt->nama_guru : $udt->nama_siswa;
 				?>
-				<ul class="collection">
+				<ul class="collection with-header">
+					<li class="collection-header">Your Account Info</li>
 					<li class="collection-item">Nama : <b><?php echo $udt->nama ?></b></li>
-					<li class="collection-item">Status Login : <b><?php echo getUserType() ?></b></li>
+					<li class="collection-item">Status Login : <b><?php echo getUserType() ?></b></li>					
+					<li class="collection-item"><a href="<?php echo site_url("home/logout") ?>">Logout</a></li>
 				</ul>
 			</div>
 	<?php endif ?>

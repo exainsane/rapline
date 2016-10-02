@@ -14,7 +14,7 @@
 	</div>
 </div>
 </form>
-<div class="col s12">
+<div class="col s12 filler">
 	<blockquote class="border-blue"><h5><?php echo $table_title ?></h5></blockquote>
 	<table class="basic_table striped">
 		<tr>

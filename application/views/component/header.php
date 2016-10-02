@@ -37,7 +37,7 @@
 			<ul class="upper-menu" id="upper-menu">
 				<li><a href="#">Login</a></li>
 				<li><a href="<?php echo site_url("home/getpassword") ?>">Dapatkan Password</a></li>
-				<li><a href="#">Rapot Siswa</a></li>
+				<li><a href="<?php echo site_url("rapor/show") ?>">Rapot Siswa</a></li>
 				<li><a href="<?php echo site_url("data/inputnilai") ?>">Pengisian Nilai (Guru)</a></li>
 				<li><a href="<?php echo site_url("data/assignkelas") ?>">Pengisian Jadwal Pengajaran</a></li>
 				<li><a href="<?php echo site_url("data/siswa") ?>">Data Siswa</a></li>
@@ -48,4 +48,8 @@
 		</div>
 	</div>
 	<div class="row <?php echo isset($contain)?"container":"" ?>">
-	<div id="user-modal" class="modal"></div>
+	<div id="user-modal" class="modal">
+		<div class="modal-content">
+			
+		</div>
+	</div>

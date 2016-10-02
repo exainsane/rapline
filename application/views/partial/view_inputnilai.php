@@ -1,4 +1,4 @@
-<div class="col s12">
+<div class="col s12 filler">
 	<form action="<?php echo site_url("data/inputnilai/") ?>" method="POST">
 	<div class="row">
 		<div class="col s12 l3">
@@ -6,7 +6,7 @@
 		    <select class="browser-default" name="kelas">
 		      <option value="" disabled >Pilih Mata Pelajaran &amp; Kelas</option>
 		      <?php foreach ($datakelas as $kls): ?>
-		      	<option value="<?php echo base64_encode($kls->id) ?>" <?php echo $kls->id == $input_selection?"selected":"" ?>><?php echo $kls->nama_mata_pelajaran." - ".getTingkat($kls->nama_kelas,$kls->tahun_masuk)." Semester ".$kls->nomor_semester ?></option>
+		      	<option value="<?php echo base64_encode($kls->id) ?>" <?php echo $kls->id == $input_selection?"selected":"" ?>><?php echo $kls->id." ".$kls->nama_mata_pelajaran." - ".getTingkat($kls->nama_kelas,$kls->tahun_masuk)." Semester ".$kls->nomor_semester ?></option>
 		      <?php endforeach ?>	      
 		    </select>
 		</div>

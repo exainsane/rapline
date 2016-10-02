@@ -1,4 +1,4 @@
-<div class="col s12">
+<div class="col s12 filler">
 	<div class="card centernotif padding20">
 		<blockquote class="quote-green"><h4>Login berhasil</h4></blockquote>
 		<p>Anda terdaftar sebagai : </p>

@@ -1,4 +1,4 @@
-<div class="col s12">
+<div class="col s12 filler">
 	<form action="<?php echo site_url("data/assignkelas/".$kelas) ?>" method="POST">
 	<div class="row">
 		<div class="col s12 l3">

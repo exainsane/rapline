@@ -117,10 +117,10 @@ td div{
 td div.jadwal_occupied{
     background: #4caf50;
 }
-td{
+table [class^="initial-default"] td{
     padding: 0px 5px !important;
 }
-th{
+table [class^="initial-default"] th{
     padding: 15px 5px !important;
 }
 
