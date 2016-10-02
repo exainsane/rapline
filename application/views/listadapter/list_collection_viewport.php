@@ -1,0 +1,1 @@
+<li class="collection-item"><strong>:[label]:</strong> : <i>:[text]:</i></li>

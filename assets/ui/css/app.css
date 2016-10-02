@@ -1,0 +1,131 @@
+/*class declaration*/
+.padding20{
+	padding: 20px;
+}
+.nopadding{
+	padding: 0;
+}
+.nomargintop{
+	margin-top: 0;
+}
+.input-field label{ /*override*/
+	left: 0;
+}
+.imglogo-header > img{
+    width: 160px;
+    height: auto;
+    display: block;
+    position: relative;
+    margin: 0px auto;
+}
+.captiontop-header{
+	height: 160px;
+}
+.inline-helper{
+	display: inline-block;
+	margin: 0;
+}
+.inlineborder{
+	width: 1px;
+	height: 100%;
+	vertical-align: middle;
+}
+.inlinecontent{
+	vertical-align: middle;
+}
+.border-blue{
+	border-color: #303f9f;
+}
+.centervertical{
+	height: 100%;
+	vertical-align: middle;
+}
+.upper-menu{
+    list-style: none;   
+}
+.upper-menu li{
+    display: inline-block;
+}
+.filler{
+    min-height: 500px;
+}
+.nilai-numberinput{
+    width: 50px !important;
+    text-align: center;
+    display: block;
+    margin: 0!important;
+    color: black;
+    font-weight: bolder;
+    border-radius: 20px !important;
+    background-color: #4caf50 !important;
+}
+.tdaction{		    
+    padding: 5px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid #efefef;
+}
+.upper-menu li a{
+    display: block;
+    margin: 4px;
+    padding: 5px 7px;
+    border-radius: 4px;
+    border: 1px solid #efefef;
+}
+.upper-menu li a, .tdaction{
+    transition: background .3s ease-out;
+}
+.upper-menu li a:hover, .tdaction:hover{
+    background: #3949ab;
+}
+.centernotif{
+	width: 450px;
+    margin: 0px auto;
+}
+.fillarea{
+    min-height: 60%;
+}
+td div.jadwal_occupied a{
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-decoration: none;
+    color: white;
+    font-size: 11px;
+    display: block;
+    margin: 3px;
+    padding: 2px;
+    border: 1px solid #c62828;
+    background: #b71c1c ;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px #666;
+    visibility: collapse;
+    opacity: 0;
+    transition: all .3s ease;
+}
+td div.jadwal_occupied:hover a{
+    visibility: visible;
+    opacity: 1;
+}
+td div{
+    display: block;
+    position: relative;
+    margin: 0px auto;
+    padding: 10px;
+    max-width: 250px;
+}
+td div.jadwal_occupied{
+    background: #4caf50;
+}
+td{
+    padding: 0px 5px !important;
+}
+th{
+    padding: 15px 5px !important;
+}
+
+/*id declaration*/
+#header{
+	z-index: 999;
+	margin-bottom: 20px;
+}
