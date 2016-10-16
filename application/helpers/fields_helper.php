@@ -4,7 +4,23 @@
  * Copyright 2016 Exairie
  * Any application should be used with the developer's permission * 
  */
-
+//function checkSuperadminAccount(){
+//    $ci =& get_instance();
+//    
+//    $ci->db->select("*")
+//            ->from("m_password_login")
+//            ->where("password_for",99);
+//    
+//    $q = $ci->db->get();
+//    
+//    if($q->num_rows() != 1){
+//        //Dont allow more than 1 superadmin account
+//        $this->db->where("password_for",99)->delete("m_password_login");                    
+//        $this->db->
+//        
+//        //Insert superadmin account        
+//    }   
+//}
 function showFields($field){
     $flds = explode(",", DB_HIDE_FIELDS);
     
@@ -44,6 +60,9 @@ function isUserLoggedIn(){
 }
 function getUserType(){
     switch(get_instance()->session->userdata("login_level")){
+        case 99:
+            return "SUPERADMIN";
+            break;
         case FIELD_CODE_GURU:
             return "Guru";
             break;
@@ -63,6 +82,17 @@ function getUserData(){
         $data = $ci->db->get("m_guru");
     }else if($ci->session->userdata("login_level") == FIELD_CODE_SISWA){
         $data = $ci->db->get("m_siswa");
+    }else if($ci->session->userdata("login_level") == SUPERADMIN_LEVEL){
+        $data = new stdClass();
+        
+        $data->id = 99;
+        $data->nama_guru = "SUPERADMIN";
+        $data->kode_identitas = 99;
+        $data->jenis_kelamin = "X";
+        $data->email = "admin@domain.com";
+        $data->timestamp = date("Y-m-d H s");
+        
+        goto directreturn;
     }
     
     if($data == null) return null;
@@ -71,6 +101,7 @@ function getUserData(){
     $data = $data->result();
     $data = end($data);
     
+    directreturn:
     return $data;
 }
 function show_custom_error($message,$resolve = null){

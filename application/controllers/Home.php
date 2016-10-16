@@ -4,10 +4,7 @@ class Home extends CI_Controller{
     function __construct(){
         parent::__construct();
 
-        $this->load->database();
-        $this->load->helper("url");
-        $this->load->helper("fields");
-        $this->load->library("session");
+        $this->load->database();     
     }
     function logout(){         
         $this->session->sess_destroy();    
@@ -104,6 +101,7 @@ class Home extends CI_Controller{
             $vwdata = array(
                 "name"=>$user_info->nama_guru,
                 "id_code"=>$user_info->kode_identitas,
+                "prev_level"=>FIELD_CODE_GURU,
                 "level"=>"Guru"
             );
             
@@ -134,10 +132,24 @@ class Home extends CI_Controller{
             $vwdata = array(
                 "name"=>$user_info->nama_siswa,
                 "id_code"=>$user_info->kode_identitas,
+                "prev_level"=>FIELD_CODE_SISWA,
                 "level"=>"Siswa"
             );
             
             $this->_login_set_session($user_info->id, FIELD_CODE_SISWA);
+            
+            return $this->_post_login($vwdata);
+        }
+        
+        if($username == DEFAULT_SYSTEM_SUPERADMIN_USERNAME && $password == md5(DEFAULT_SYSTEM_SUPERADMIN_PASWORD)){
+            $vwdata = array(
+                "name"=>"SUPERADMIN",
+                "id_code"=>"SUPERADMIN",
+                "prev_level"=>SUPERADMIN_LEVEL,
+                "level"=>"SUPERADMIN"
+            );
+            
+            $this->_login_set_session(SUPERADMIN_LEVEL, SUPERADMIN_LEVEL);
             
             return $this->_post_login($vwdata);
         }

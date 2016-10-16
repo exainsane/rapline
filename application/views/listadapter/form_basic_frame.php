@@ -1,4 +1,4 @@
-<div class="row">
+	<div class="row">
 	<h5 class="">:[title]:</h5>
 	<div class="col s12">
 		<form method="POST">

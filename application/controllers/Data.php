@@ -9,11 +9,9 @@ class Data extends CI_Controller{
     public function __construct() {
         parent::__construct();
         
-        $this->load->database();
-        $this->load->helper("fields");
+        $this->load->database();        
         $this->load->model("DataManipulationModel");
-        $this->load->library("ViewAdapter");
-        $this->load->library("session");
+        $this->load->library("ViewAdapter");        
     }
     
     function kelas(){
@@ -531,6 +529,7 @@ class Data extends CI_Controller{
             "nama_siswa"=>"Nama Siswa",
             "kode_identitas"=>"NIS",
             "jenis_kelamin"=>"Jenis Kelamin",
+            "email"=>"E-Mail",
             "action"=>"Opsi"
         );
         
@@ -566,6 +565,131 @@ class Data extends CI_Controller{
         $this->load->view("component/header",array("contain"=>true));
         
         $this->load->view("partial/view_siswa",$vwdata);
+        
+        $this->load->view("component/footer");
+    }
+    
+    function guru(){
+        $limit = returnDefaultIfNull($this->input->get("show"), null);
+        $search = returnDefaultIfNull($this->input->get("search"), null);
+        $bysemester = returnDefaultIfNull($this->input->get("smt"), null);
+        
+        
+//        //cek session
+//        if($this->input->post("kelas") != null)
+//        {
+//            $kelas_now = base64_decode ($this->input->post("kelas"));
+//            $this->session->set_tempdata("select_kelas", $kelas_now);
+//        }
+//        if($this->input->get("kelas") != null)
+//        {
+//            $kelas_now = base64_decode ($this->input->get("kelas"));
+//            $this->session->set_tempdata("select_kelas", $kelas_now);
+//        }
+        
+        $kelas_now = $this->session->userdata("select_kelas");        
+        
+        $exact_search = array();
+        
+        if($bysemester != null)
+        {
+            array_push($exact_search, "tahun_masuk = ".$bysemester);
+        }
+        
+        $table = "m_guru";
+        
+        //Ambil data kelas
+//        $this->db
+//                ->select("*")
+//                ->from("m_kelas")
+//                ->order_by("tahun_masuk","DESC")
+//                ->order_by("nama_kelas","ASC");
+//               
+//        
+//        $dkelas = $this->db->get()->result();
+//        
+//        $year_now = intval(date("Y"));
+//        
+//        for ($i = 0; $i < count($dkelas); $i++){
+//            $tingkat = (intval($year_now - $dkelas[$i]->tahun_masuk) + 10);
+////            $tingkat = $tingkat > 12? 12 : $tingkat;
+//            
+//            $dkelas[$i]->nama_kelas = ($tingkat > 12?12:$tingkat)." ".$dkelas[$i]->nama_kelas.($tingkat > 12?"(".($dkelas[$i]->tahun_masuk).")":"");
+//        }
+//        
+//        if ($kelas_now == null && count($dkelas >= 1)) {
+//            $kelas_now = $dkelas[0]->id;
+//            $this->session->set_tempdata("select_kelas", $kelas_now);
+//        }
+//        
+//        $vwdata = array(
+//            "datakelas"=>$dkelas,
+//            "kls_now"=>$kelas_now
+//        );
+//        
+        if($this->input->get("d") != null){
+            $id = base64_decode(urldecode($this->input->get("d")));
+            $this->DataManipulationModel->delete($table,$id);
+        }
+//        
+////        $this->load->model("FormAction");
+////        $this->FormAction->scanForInput($table);
+        
+        $exact_search = array();
+        
+//        array_push($exact_search, "kelas = ".$kelas_now);
+        
+        
+//        $exact_search = count($exact_search) < 1?null:implode(" and ", $exact_search);
+        $data = $this->DataManipulationModel->getData($table, null, $search, "id", "asc", $exact_search)->result();
+        
+        $fields = $this->DataManipulationModel->getTableFieldList($table);
+        
+        array_push($fields,"action");
+                
+        $field_captions = array(
+            "id"=>"",
+            "kelas"=>"",
+            "nama_guru"=>"Nama Siswa",
+            "kode_identitas"=>"NIS",
+            "jenis_kelamin"=>"Jenis Kelamin",
+            "email"=>"E-Mail",
+            "action"=>"Opsi"
+        );
+        
+        $year_now = intval(date("Y"));
+        
+        for ($i = 0;$i < count($data); $i++){            
+            
+            $data[$i]->action = array(
+                array(
+                    "link_caption"=>"Hapus Data",
+                    "link"=>  "javascript:confirmDeletion('".site_url("data/guru/?d=".  urlencode(base64_encode($data[$i]->id)))."')"
+                )
+            );
+        }
+        $namakelas_now = "";
+        $angkatan_now = -1;
+//        if($kelas_now != null){
+//            $i = search_where($kelas_now, $dkelas, "id");
+//            if($i >= 0)
+//            {
+//                $namakelas_now = $dkelas[$i]->nama_kelas;
+//                $angkatan_now = $dkelas[$i]->tahun_masuk;
+//            }
+//        }
+                
+        $vwdata["fields"] = $fields;
+        $vwdata["fcaption"] = $field_captions;
+        $vwdata["data"] = $data;
+        $vwdata["kelas_now"] = $namakelas_now." Angkatan ".$angkatan_now;
+        $vwdata["kelas_id"] = base64_encode($kelas_now);
+        $vwdata["table_title"] = "Daftar Guru";      
+        $vwdata["form"] = ViewAdapter::getFormByTableName($table);
+        
+        $this->load->view("component/header",array("contain"=>true));
+        
+        $this->load->view("partial/view_guru",$vwdata);
         
         $this->load->view("component/footer");
     }

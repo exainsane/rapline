@@ -23,8 +23,12 @@
 				<h5 class="left-align">Welcome</h5>
 				<br>
 				<?php  
-				$udt = getUserData();
-				$udt->nama = isset($udt->nama_guru)? $udt->nama_guru : $udt->nama_siswa;
+				$udt = getUserData();                                
+				if(isset($udt->nama_guru)){
+                                    $udt->nama = $udt->nama_guru;
+                                }else if(isset($udt->nama_siswa)){
+                                    $udt->nama = $udt->nama_siswa;
+                                }
 				?>
 				<ul class="collection with-header">
 					<li class="collection-header">Your Account Info</li>

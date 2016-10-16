@@ -97,3 +97,7 @@ define("DB_HIDE_FIELDS",'id,timestamp');
 define("FIELD_CODE_GURU",1);
 define("FIELD_CODE_SISWA",2);
 define("FIELD_CODE_GURU_WALI",4);
+
+define("DEFAULT_SYSTEM_SUPERADMIN_USERNAME","admin");
+define("DEFAULT_SYSTEM_SUPERADMIN_PASWORD","admin");
+define("SUPERADMIN_LEVEL",99);
