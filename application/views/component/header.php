@@ -35,15 +35,26 @@
 	<div class="row container">
 		<div class="col s12">
 			<ul class="upper-menu" id="upper-menu">
-				<li><a href="#">Login</a></li>
-				<li><a href="<?php echo site_url("home/getpassword") ?>">Dapatkan Password</a></li>
-				<li><a href="<?php echo site_url("rapor/show") ?>">Rapot Siswa</a></li>
-				<li><a href="<?php echo site_url("data/inputnilai") ?>">Pengisian Nilai (Guru)</a></li>
-				<li><a href="<?php echo site_url("data/assignkelas") ?>">Pengisian Jadwal Pengajaran</a></li>
-				<li><a href="<?php echo site_url("data/siswa") ?>">Data Siswa</a></li>
-				<li><a href="<?php echo site_url("data/kelas") ?>">Data Kelas</a></li>
-				<li><a href="<?php echo site_url("data/semester") ?>">Data Semester</a></li>
-				<li><a href="<?php echo site_url("data/matapelajaran") ?>">Data Mata Pelajaran</a></li>
+				<?php if (!isUserLoggedIn()): ?>
+					<li><a href="<?php echo site_url("home") ?>">Login</a></li>
+				<?php endif ?>
+				<?php if (isUser(SUPERADMIN_LEVEL)): ?>
+					<li><a href="<?php echo site_url("home/getpassword") ?>">Dapatkan Password</a></li>							
+					<li><a href="<?php echo site_url("data/siswa") ?>">Data Siswa</a></li>
+					<li><a href="<?php echo site_url("data/guru") ?>">Data Guru</a></li>
+					<li><a href="<?php echo site_url("data/kelas") ?>">Data Kelas</a></li>
+					<li><a href="<?php echo site_url("data/semester") ?>">Data Semester</a></li>
+					<li><a href="<?php echo site_url("data/matapelajaran") ?>">Data Mata Pelajaran</a></li>
+				<?php endif ?>
+				<?php if (isUser(FIELD_CODE_SISWA)): ?>
+					<li><a href="<?php echo site_url("rapor/show") ?>">Rapot Siswa</a></li>
+				<?php endif ?>
+				<?php if (isUser(FIELD_CODE_GURU)): ?>					
+					<li><a href="<?php echo site_url("data/inputnilai") ?>">Pengisian Nilai (Guru)</a></li>				
+				<?php endif ?>
+				<?php if (isUser(FIELD_CODE_GURU_WALI)): ?>
+					<li><a href="<?php echo site_url("data/assignkelas") ?>">Pengisian Jadwal Pengajaran</a></li>					
+				<?php endif ?>
 			</ul>
 		</div>
 	</div>

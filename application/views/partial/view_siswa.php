@@ -21,6 +21,7 @@
 		<tr>
 			<th>No</th>
 		<?php foreach ($fields as $f): ?>
+			<?php if(!isset($fcaption[$f])) continue;?>
 			<?php if (strlen($fcaption[$f]) > 0): ?>
 				<th><?php echo $fcaption[$f] ?></th>
 			<?php endif ?>
@@ -29,7 +30,8 @@
 		<?php $i=0;foreach ($data as $d): ?>
 			<tr>
 			<td><?php echo ++$i ?></td>
-				<?php foreach ($fields as $f): ?>			
+				<?php foreach ($fields as $f): ?>	
+					<?php if(!isset($fcaption[$f])) continue;?>		
 					 <?php if (strlen($fcaption[$f]) < 1) continue; ?>														
 					<?php if ($f == "action" && isset($d->$f) ): ?>
 						<td>
@@ -59,6 +61,18 @@
 				<td>Kelas</td>
 				<td>:</td>
 				<td><b><?php echo $kelas_now ?></b></td>
+			</tr>
+			<tr>
+				<td>Tahun Masuk</td>
+				<td>:</td>
+				<td>
+					<select name="tahun_masuk" required class="browser-default">
+						<option value="" disabled="true">Pilih tahun masuk</option>
+						<?php for ($i = intval(date("Y"))-3;$i < intval(date("Y"))+3;$i++ ): ?>
+							<option value="<?php echo $i ?>"><?php echo $i ?></option>
+						<?php endfor ?>
+					</select>
+				</td>
 			</tr>
 		</table>
 		<form action="<?php echo site_url("actions/importkelas/") ?>" method="POST" enctype="multipart/form-data">			

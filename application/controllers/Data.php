@@ -15,6 +15,7 @@ class Data extends CI_Controller{
     }
     
     function kelas(){
+        requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), 10);
         $search = returnDefaultIfNull($this->input->get("search"), null);
         $bysemester = returnDefaultIfNull($this->input->get("smt"), null);
@@ -117,6 +118,7 @@ class Data extends CI_Controller{
     }
    
     function semester(){
+        requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), 10);
         $search = returnDefaultIfNull($this->input->get("search"), null);
         $table = "m_semester";
@@ -168,6 +170,7 @@ class Data extends CI_Controller{
         $this->load->view("component/footer");
     }
     function matapelajaran(){
+        requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), 10);
         $search = returnDefaultIfNull($this->input->get("search"), null);        
         
@@ -222,6 +225,7 @@ class Data extends CI_Controller{
         $this->load->view("component/footer");
     }
     function unassignkelas($kelasid){
+        requirePermission(FIELD_CODE_GURU_WALI);
         $id = base64_decode(urldecode($this->input->get("c")));
         
         $this->db->where("id",$id)
@@ -230,6 +234,7 @@ class Data extends CI_Controller{
         redirect(site_url("data/=[/".$kelasid));
     }
     function assignkelas($kelasid = null){ 
+        requirePermission(FIELD_CODE_GURU_WALI);
         if($this->input->post("for_tahun") == null){
             if($this->session->userdata("assign_for_year") != null){
                 goto skiptahuncheck;
@@ -441,11 +446,13 @@ class Data extends CI_Controller{
         $this->load->view("component/footer");
     }
     function importXls(){
+        show_404();
         $this->load->view("component/header");
         $this->load->view("partial/upload_importxls");
         $this->load->view("component/footer");
     }
     function siswa(){
+        requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), null);
         $search = returnDefaultIfNull($this->input->get("search"), null);
         $bysemester = returnDefaultIfNull($this->input->get("smt"), null);
@@ -570,6 +577,7 @@ class Data extends CI_Controller{
     }
     
     function guru(){
+        requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), null);
         $search = returnDefaultIfNull($this->input->get("search"), null);
         $bysemester = returnDefaultIfNull($this->input->get("smt"), null);
@@ -631,9 +639,24 @@ class Data extends CI_Controller{
             $id = base64_decode(urldecode($this->input->get("d")));
             $this->DataManipulationModel->delete($table,$id);
         }
+        
+        $edit_data = null;
+        if($this->input->get("e") != null){
+            $id = base64_decode($this->input->get("e"));
+            $this->db->select("*")
+                    ->from($table)
+                    ->where("id",$id);
+            
+            $q = $this->db->get();
+            
+            if($q->num_rows() == 1){
+                $edit_data = $q->result_array();
+                $edit_data = end($edit_data);                
+            }
+        }
 //        
-////        $this->load->model("FormAction");
-////        $this->FormAction->scanForInput($table);
+        $this->load->model("FormAction");
+        $this->FormAction->scanForInput($table);
         
         $exact_search = array();
         
@@ -663,6 +686,10 @@ class Data extends CI_Controller{
             
             $data[$i]->action = array(
                 array(
+                    "link_caption"=>"Edit",
+                    "link"=>  site_url("data/guru/?e=".urlencode(base64_encode($data[$i]->id)))
+                ),
+                array(
                     "link_caption"=>"Hapus Data",
                     "link"=>  "javascript:confirmDeletion('".site_url("data/guru/?d=".  urlencode(base64_encode($data[$i]->id)))."')"
                 )
@@ -685,7 +712,7 @@ class Data extends CI_Controller{
         $vwdata["kelas_now"] = $namakelas_now." Angkatan ".$angkatan_now;
         $vwdata["kelas_id"] = base64_encode($kelas_now);
         $vwdata["table_title"] = "Daftar Guru";      
-        $vwdata["form"] = ViewAdapter::getFormByTableName($table);
+        $vwdata["form"] = ViewAdapter::getFormByTableName($table,null,null,$edit_data);
         
         $this->load->view("component/header",array("contain"=>true));
         
@@ -695,14 +722,15 @@ class Data extends CI_Controller{
     }
     
     function inputnilai(){
-        if($this->session->userdata("login_id_user") == null || $this->session->userdata("login_level") == null){
-            show_custom_error("Anda tidak memiliki wewenang untuk mengakses halaman ini", "Silahkan login sebagai guru");
-            return;
-        }
-        if($this->session->userdata("login_level") != FIELD_CODE_GURU){
-            show_custom_error("User selain user guru tidak memiliki wewenang untuk mengakses halaman ini", "Silahkan login sebagai guru");
-            return;
-        }
+//        if($this->session->userdata("login_id_user") == null || $this->session->userdata("login_level") == null){
+//            show_custom_error("Anda tidak memiliki wewenang untuk mengakses halaman ini", "Silahkan login sebagai guru");
+//            return;
+//        }
+//        if($this->session->userdata("login_level") != FIELD_CODE_GURU){
+//            show_custom_error("User selain user guru tidak memiliki wewenang untuk mengakses halaman ini", "Silahkan login sebagai guru");
+//            return;
+//        }
+        requirePermission(FIELD_CODE_GURU);
         if($this->input->post("smt") != null){
             $this->session->set_userdata("assignnilai_smtselection", base64_decode($this->input->post("smt")));
         }

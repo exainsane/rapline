@@ -46,29 +46,20 @@ function getGeneratedPassword($length){
     
     return $pwd;
 }
-
-function isUserLoggedIn(){
-    $ci =& get_instance();
-    
-    $ci->load->library("session");
-    
-    if($ci->session->userdata("login_id_user") == NULL) {
-        return false;
+function getValue($index,$obj){
+    if(is_object($obj)){
+        return isset($obj->$index)?$obj->$index:"";
     }
-    
-    return true;
+    else if(is_array($obj)){
+        return isset($obj[$index])?$obj[$index]:"";
+    }
 }
-function getUserType(){
-    switch(get_instance()->session->userdata("login_level")){
-        case 99:
-            return "SUPERADMIN";
-            break;
-        case FIELD_CODE_GURU:
-            return "Guru";
-            break;
-        case FIELD_CODE_SISWA:
-            return "Siswa";
-            break;
+function getValueEncoded($index,$obj){
+    if(is_object($obj)){
+        return base64_encode(isset($obj->$index)?$obj->$index:"");
+    }
+    else if(is_array($obj)){
+        return base64_encode(isset($obj[$index])?$obj[$index]:"");
     }
 }
 function getUserData(){

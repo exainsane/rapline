@@ -94,9 +94,9 @@ define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 //separated by comma
 define("DB_HIDE_FIELDS",'id,timestamp');
 
-define("FIELD_CODE_GURU",1);
-define("FIELD_CODE_SISWA",2);
-define("FIELD_CODE_GURU_WALI",4);
+define("FIELD_CODE_GURU",2);
+define("FIELD_CODE_SISWA",1);
+define("FIELD_CODE_GURU_WALI",3);
 
 define("DEFAULT_SYSTEM_SUPERADMIN_USERNAME","admin");
 define("DEFAULT_SYSTEM_SUPERADMIN_PASWORD","admin");

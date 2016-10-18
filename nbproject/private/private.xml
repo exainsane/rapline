@@ -3,13 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/xampp/htdocs/Rapline/application/config/constants.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/config/autoload.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/system/database/DB_result.php</file>
-            <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/loginview.php</file>
-            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Home.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/view_biodata_siswa.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/models/DataManipulationModel.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/helpers/permission_helper.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Guru.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Admin.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Siswa.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/models/FormAction.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/helpers/dictionary_helper.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/helpers/fields_helper.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/view_siswa.php</file>
-            <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/view_guru.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Data.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/helpers/dir_helper.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/loginview.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Home.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/libraries/ViewAdapter.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/view_guru.php</file>
         </group>
     </open-files>
 </project-private>

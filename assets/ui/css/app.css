@@ -123,7 +123,9 @@ table [class^="initial-default"] td{
 table [class^="initial-default"] th{
     padding: 15px 5px !important;
 }
-
+.cardchild-padding-20 .card{
+    padding: 20px;
+}
 /*id declaration*/
 #header{
 	z-index: 999;

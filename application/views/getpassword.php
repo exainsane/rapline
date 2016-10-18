@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row fillarea">
 	<div class="col s12 l12">
 		<div class="card  padding20">
 			<h5 class="right-align">Dapatkan Password</h5>

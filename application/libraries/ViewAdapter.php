@@ -10,13 +10,21 @@ class ViewAdapter{
   private $CI;  
   private $frame = '',$viewPort,$frame_bound;
   private $data, $metadata, $viewPort_bound;
+  private $viewport_content = null;
+  private $before_frame_binding = array();
   function __construct(){
     $this->CI =& get_instance();
     
     return $this;
   }
-  
-  static function getFormByTableName($tbl, $data = null, $post_to = null){
+  public function setViewportContent($data){
+      $this->viewport_content = $data;
+  }
+  public function getViewportContentValue($key){
+      if($this->viewport_content == null) return "";
+      return isset($this->viewport_content[$key])? $this->viewport_content[$key] : "";
+  }
+  static function getFormByTableName($tbl, $data = null, $post_to = null,$form_content_values = null){    
     $ci =& get_instance();
     $ci->load->model("DataManipulationModel","dmm");
     $ci->load->library("ViewAdapter");
@@ -28,7 +36,17 @@ class ViewAdapter{
         ->setFrame($ci->load->view("listadapter/form_basic_frame", "", TRUE))
         ->setViewPort($ci->load->view("listadapter/form_basic_viewport","",TRUE));                
 
-
+    if($form_content_values != null) {
+        $vw->setViewportContent ($form_content_values);
+        define("tbl",$tbl);
+        define("dataid",$form_content_values["id"]);
+        $vw->addPreFrameBoundListener(function($frame){            
+            global $tbl,$form_content_values;
+            $frame = str_replace("</form>", "<input type='hidden' name='table' value='".base64_encode(tbl)."'> "
+                    . "<input type='hidden' name='id' value='".base64_encode(dataid)."'></form>", $frame);
+            return $frame;
+        });
+    }
 
     $fields = $ci->dmm->getTableFieldList($tbl);
 
@@ -45,6 +63,7 @@ class ViewAdapter{
             'placeholder'=>'input '.$generalized_name,
             'title'=>$generalized_name,
             'inputname'=>$f,
+            'inputvalue'=>$vw->getViewportContentValue($f),
             'id'=>$f.'-field'
         );
         array_push($data, $q);
@@ -117,6 +136,9 @@ class ViewAdapter{
   }
   
   function bindFrame(){
+    foreach($this->before_frame_binding as $fn){
+        $this->frame = $fn($this->frame);
+    }
     $this->frame_bound = str_replace(":[content]:", implode("", $this->viewPort_bound), $this->frame);    
     
     return $this;
@@ -128,6 +150,9 @@ class ViewAdapter{
   
   function get(){
       return $this->frame_bound;
+  }
+  function addPreFrameBoundListener($listener){
+      array_push($this->before_frame_binding, $listener);
   }
 }
 ?>

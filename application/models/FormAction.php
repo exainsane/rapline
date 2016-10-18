@@ -51,14 +51,37 @@ class FormAction extends CI_Model{
         foreach ($fields as $key){
 
             if($key == "id") continue;
-
+            if(preg_match("/img_.*/", $key)){
+                $this->db->set($key,$this->uploadFile($key));
+            }
+            
             if(isset($array[$key])){
-                $this->db->set($key,$value);
+                $this->db->set($key,$array[$key]);
             }            
         }
         
         $this->db->where("id",  base64_decode($array['id']));
         $this->db->update($tbl);
+    }
+    function uploadFile($field){
+        $this->load->library("upload");
+        
+        $upcfg = array();
+        $upcfg['upload_path'] = './assets/uploads/images/';
+        $upcfg['allowed_types'] = 'jpg|png';
+        
+        $this->load->helper("dir");
+        
+        recursive_check_add_dir($upcfg["upload_path"], "/");
+        
+        $this->upload->initialize($upcfg,true);
+        
+        if($this->upload->do_upload($field)){
+            return $this->upload->data("full_path");
+        }
+        else{
+            quit("Error uploading picture!", $this->upload->display_errors());
+        }
     }
     function input(){        
         if($this->input->post("table") == null)
