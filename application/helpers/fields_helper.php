@@ -122,9 +122,15 @@ function query_first($q){
 
 function search_where($search, $arr, $field){
     for($i = 0;$i < count($arr); $i++){
-        if($arr[$i]->$field == $search)
-            return $i;
-    }
+        if(is_object($arr[$i])){
+            if($arr[$i]->$field == $search)
+                return $i;
+        }
+        if(is_array($arr[$i])){
+            if($arr[$i][$field] == $search)
+                return $i;
+        }
+    }   
     return -1;
 }
 
@@ -134,4 +140,41 @@ function getTingkat($kelas, $tahun_masuk){
 
     $kelas = ($tingkat > 12?12:$tingkat)." ".$kelas.($tingkat > 12?"(".($tahun_masuk).")":"");
     return $kelas;
+}
+
+function getValueFromDB($table,$fieldname,$id_col,$id_value){
+    $ci =& get_instance();    
+    $ci->db->select($fieldname)->from($table)
+            ->where($id_col,$id_value);
+    $q = $ci->db->get();
+    
+    if($q->num_rows() < 1)
+        return null;
+    else{
+        $q = $q->result();
+        $q = end($q);
+        return $q->$fieldname;
+    }
+}
+
+function calculateSmt($thn_masuk){    
+    $yr_now = intval(date("Y"));
+    
+    $date_masuk = DateTime::createFromFormat("Y-m-d", $thn_masuk."-07-01");
+    $date_now = new DateTime();
+    
+    $diff = $date_masuk->diff($date_now);
+    
+    $l = intval((($diff->y * 12) + $diff->m) / 6) + 1;
+    
+    if($date_masuk > $date_now){
+        $l = $l * -1;
+    }
+    
+    if($l > 6){
+        $l = $l." (lulus)";
+    }
+    
+    return $l;
+    
 }
