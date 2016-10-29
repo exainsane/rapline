@@ -390,7 +390,7 @@ class Data extends CI_Controller{
         if($this->input->post("is_input") != null){
            $ins = $this->_input_assign_kelas($kid);
            if($ins["input"] == false){
-               echo $ins["error"];
+               quit($ins["error"],"");
            }
         }
         
@@ -440,7 +440,7 @@ class Data extends CI_Controller{
 //            $dtsmt[$i]->nomor_semester = calculateSmt($dtsmt[$i]->tahun_masuk,$dtsmt[$i]->ganjil == 1);
         }
         
-        $vwdata = array(      
+        $vwdata = array(        
             "datajadwal"=>$jadwal,
             "kelas"=>urlencode(base64_encode($kid)),
             "kelas_name"=>  getTingkat($dkelas->nama_kelas, $dkelas->tahun_masuk),
@@ -780,9 +780,9 @@ class Data extends CI_Controller{
         
         $data_assign = $dtassign->result();
         
-        for($i = 0;$i < count($data_assign);$i++){
-            $data_assign[$i]->nomor_semester = calculateSmt($data_assign[$i]->tahun_masuk,$data_assign[$i]->ganjil ==1)." (".$data_assign[$i]->tahun_masuk.")";
-        }
+//        for($i = 0;$i < count($data_assign);$i++){
+//            $data_assign[$i]->nomor_semester = calculateSmt($data_assign[$i]->tahun_masuk,$data_assign[$i]->ganjil ==1)." (".$data_assign[$i]->tahun_masuk.")";
+//        }
         
         if($inputclass_selection == null && count($data_assign) > 0){
             $inputclass_selection = $data_assign[0]->id;    
@@ -797,9 +797,9 @@ class Data extends CI_Controller{
         $dtsemester = $this->db->get();
         
         $dtsmt = $dtsemester->result();
-        for($i = 0;$i < count($dtsmt);$i++){
-            $dtsmt[$i]->nomor_semester = calculateSmt($dtsmt[$i]->tahun_masuk,$dtsmt[$i]->ganjil == 1)." (".$dtsmt[$i]->tahun_masuk.")";
-        }
+//        for($i = 0;$i < count($dtsmt);$i++){
+//            $dtsmt[$i]->nomor_semester = calculateSmt($dtsmt[$i]->tahun_masuk,$dtsmt[$i]->ganjil == 1)." (".$dtsmt[$i]->tahun_masuk.")";
+//        }
         
         if($dtsemester->num_rows() < 1){
             show_custom_error("Tidak ada data semester kumulatif!","Silahkan tambahkan semester kumulatif terlebih dahulu");

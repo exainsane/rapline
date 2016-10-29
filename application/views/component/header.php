@@ -50,12 +50,14 @@
 				<?php endif ?>
 				<?php if (isUser(FIELD_CODE_SISWA)): ?>
 					<li><a href="<?php echo site_url("rapor/show") ?>">Rapot Siswa</a></li>
+					<li><a href="<?php echo site_url("siswa/biodata") ?>">Biodata Siswa</a></li>
 				<?php endif ?>
 				<?php if (minUser(FIELD_CODE_GURU)): ?>					
 					<li><a href="<?php echo site_url("data/inputnilai") ?>">Pengisian Nilai (Guru)</a></li>				
 				<?php endif ?>
 				<?php if (isUser(FIELD_CODE_GURU_WALI)): ?>					
 					<li><a href="<?php echo site_url("data/assignkelas") ?>">Pengisian Jadwal Pengajaran</a></li>					
+					<li><a href="<?php echo site_url("rapor/raporkelas	") ?>">Rapor Kelas Perwalian</a></li>					
 				<?php endif ?>
 			</ul>
 		</div>
