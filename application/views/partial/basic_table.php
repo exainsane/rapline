@@ -4,15 +4,19 @@
 		<tr>
 		<th>No</th>
 		<?php foreach ($fields as $f): ?>
+			<?php if (!isset($fcaption[$f])) continue; ?>
 			<?php if (strlen($fcaption[$f]) > 0): ?>
 				<th><?php echo $fcaption[$f] ?></th>
 			<?php endif ?>
 		<?php endforeach ?>
 		</tr>
 		<?php $i=0;foreach ($data as $d): ?>
+			<?php if(isset($fnmodify) && $fnmodify != null) $fnmodify($d); ?>
 			<tr>
 				<td><?php echo ++$i ?></td>
 				<?php foreach ($fields as $f): ?>
+
+					<?php if (!isset($fcaption[$f])) continue; ?>
 					<?php if (strlen($fcaption[$f]) < 1) continue; ?>										
 					<?php if ($f == "action" && isset($d->$f)): ?>
 						<td>

@@ -6,13 +6,12 @@
 		    <select class="browser-default" name="kelas">
 		      <option value="" disabled >Pilih Mata Pelajaran &amp; Kelas</option>
 		      <?php foreach ($datakelas as $kls): ?>
-		      	<option value="<?php echo base64_encode($kls->id) ?>" <?php echo $kls->id == $input_selection?"selected":"" ?>><?php echo $kls->id." ".$kls->nama_mata_pelajaran." - ".getTingkat($kls->nama_kelas,$kls->tahun_masuk)." Semester ".$kls->nomor_semester ?></option>
+		      	<option value="<?php echo base64_encode($kls->id) ?>" <?php echo $kls->id == $input_selection?"selected":"" ?>><?php echo $kls->nama_mata_pelajaran." - ".getTingkat($kls->nama_kelas,$kls->tahun_masuk)." Semester ".$kls->nomor_semester ?></option>
 		      <?php endforeach ?>	      
 		    </select>
 		</div>
 		<div class="col s12 l9">
-			<button class="btn indigo darken-1" style="margin-top:20px">Terapkan</button>
-			<a class="btn red darken-1 modal-trigger" href="#form" style="margin-top:20px">Import Data</a>			
+			<button class="btn indigo darken-1" style="margin-top:20px">Terapkan</button>			
 			<a class="btn green darken-1" href="#" onclick="$('#frm').submit()" style="margin-top:20px">Simpan Nilai</a>		
 		</div>
 	</div>
@@ -24,6 +23,7 @@
 			<tr>
 				<th>No</th>
 			<?php foreach ($fields as $f): ?>
+				<?php if(!isset($fcaption[$f])) continue; ?>
 				<?php if (strlen($fcaption[$f]) > 0): ?>
 					<th><?php echo $fcaption[$f] ?></th>
 				<?php endif ?>
@@ -32,11 +32,42 @@
 			<?php $i=0;foreach ($data as $d): ?>
 				<tr class="tbrow">
 				<td><?php echo ++$i ?></td>
-					<?php foreach ($fields as $f): ?>			
+					<?php foreach ($fields as $f): ?>		
+						<?php if(!isset($fcaption[$f])) continue; ?>	
 						 <?php if (strlen($fcaption[$f]) < 1) continue; ?>		
 						<?php if ($f == "nilai" && isset($d->$f)): ?>
-							<td><input type="number" class="nilai-numberinput" name="nid_<?php echo $d->id_nilai ?>" value="<?php echo $d->$f ?>"></td>									
-						<?php continue;endif ?>												
+							<td>
+								<div class="input-field">
+									<input type="number" class="nilai-numberinput" name="nid_<?php echo $d->id_nilai ?>" value="<?php echo $d->$f ?>">
+									<label for="">Nilai Akademik</label>
+								</div>
+							</td>									
+						<?php continue;endif ?>		
+						<?php if ($f == "deskripsi_nilai" && isset($d->$f)): ?>		
+							<td>															
+								<div class="input-field">									
+									<input type="text" data-multiline="true" name="desd_<?php echo $d->id_nilai ?>" value="<?php echo $d->$f ?>">
+									<label for="">Deskripsi</label>
+								</div>
+							</td>								
+						<?php continue;endif ?>		
+						<?php if ($f == "nilai_keterampilan" && isset($d->$f)): ?>		
+							<td>															
+								<div class="input-field">
+									<input type="number" class="nilai-numberinput" name="nik_<?php echo $d->id_nilai ?>" value="<?php echo $d->$f ?>">
+									<label for="">Nilai Keterampilan</label>
+								</div>							
+							</td>								
+						<?php continue;endif ?>		
+						<?php if ($f == "deskripsi_nilai_keterampilan" && isset($d->$f)): ?>		
+							<td>															
+								<div class="input-field">									
+									<input type="text" data-multiline="true" name="desk_<?php echo $d->id_nilai ?>" value="<?php echo $d->$f ?>">
+									<label for="">Deskripsi</label>
+								</div>
+							</td>								
+						<?php continue;endif ?>		
+
 						<?php if ($f == "action" && isset($d->$f) ): ?>
 							<td>
 							<?php foreach ($d->$f as $act): ?>

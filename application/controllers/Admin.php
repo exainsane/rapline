@@ -170,7 +170,7 @@ class Admin extends CI_Controller{
         $qsmt = $this->db->get();
         $qsmt = $qsmt->result();
         for($i = 0;$i < count($qsmt);$i++){
-            $qsmt[$i]->nomor_semester = calculateSmt($qsmt[$i]->tahun_masuk)." (".$qsmt[$i]->tahun_masuk.")";
+            $qsmt[$i]->nomor_semester = calculateSmt($qsmt[$i]->tahun_masuk,$qsmt[$i]->ganjil == 1)." (".$qsmt[$i]->tahun_masuk.")";
         }
         
         $this->db
@@ -190,7 +190,7 @@ class Admin extends CI_Controller{
         
         $vwdata = array();
         $vwdata["data"] = $data;
-        $vwdata["table_title"] = "Data wali kelas semester ".calculateSmt(getValueFromDB("m_semester", "tahun_masuk", "id", $for_smt));
+        $vwdata["table_title"] = "Data wali kelas semester ".calculateSmt(getValueFromDB("m_semester", "tahun_masuk", "id", $for_smt),getValueFromDB("m_semester", "ganjil", "id", $for_smt) == 1);
         $vwdata["datasmt"] = $qsmt;
         $vwdata["fields"] = $fields;
         $vwdata["fcaption"] = $fieldcaption;

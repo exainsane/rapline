@@ -4,9 +4,9 @@
 		<div class="col s12 l3">
 			<label>Semester</label>
 		    <select class="browser-default" name="for_semester">
-		      <option value="" disabled >Pilih Tahun/Semester Kumulatif</option>
+		      <option value="" disabled >Pilih Tahun/Semester</option>
 		      <?php foreach ($datasmt as $smt): ?>
-		      	<option value="<?php echo base64_encode($smt->id) ?>" <?php echo $smt->id == $smt_now?"selected":"" ?>><?php echo $smt->tahun_masuk."/".$smt->nomor_semester ?></option>
+		      	<option value="<?php echo base64_encode($smt->id) ?>" <?php echo $smt->id == $smt_now?"selected":"" ?>><?php echo $smt->nomor_semester ?></option>
 		      <?php endforeach ?>	      
 		    </select>
 		</div>
@@ -67,6 +67,12 @@
 			      	<option value="<?php echo base64_encode($gr->id) ?>"><?php echo $gr->nama_guru ?></option>
 			      <?php endforeach ?>	      
 			    </select>
+			</div>
+			<div>
+				<label>KKM</label>
+				<div class="input-field">
+					<input type="number" name="kkm">
+				</div>			   
 			</div>
 			<div class="row">
 				<div class="col s6">

@@ -81,16 +81,39 @@ class Actions extends CI_Controller{
         $userid = $this->session->userdata("login_id_user");
         
         $arr = array();
+        
         foreach($posts as $key => $value){
+            $insid = null;
+            $insert = false;
             if(preg_match("/nid_./", $key))
             {
-                $insid = str_replace("nid_", "", $key);
-                $value = $value;
+                $insid = str_replace("nid_", "", $key);                
+                $this->db->set("nilai",$value);
+                $insert = true;
+            }
+            if(preg_match("/nik_./", $key))
+            {
+                $insid = str_replace("nik_", "", $key);
+                $this->db->set("nilai_keterampilan",$value);
+                $insert = true;
+            }
+            if(preg_match("/desk_./", $key))
+            {
+                $insid = str_replace("desk_", "", $key);
+                $this->db->set("deskripsi_nilai_keterampilan",$value);
+                $insert = true;
+            }
+            if(preg_match("/desd_./", $key))
+            {
+                $insid = str_replace("desd_", "", $key);
+                $this->db->set("deskripsi_nilai",$value);
+                $insert = true;
+            }
+            if($insert == true){
                 $this->db
                         ->set("id_mata_pelajaran",$assigndata->id_mata_pelajaran)
                         ->set("id_guru",$userid)
                         ->set("id_semester",$assigndata->id_semester)
-                        ->set("nilai",$value)
                         ->where("id",$insid);
                 $this->db->update("t_nilai");
             }

@@ -131,7 +131,7 @@ class Data extends CI_Controller{
         $this->load->model("FormAction");
         $this->FormAction->scanForInput($table);
         
-        $data = $this->DataManipulationModel->getData($table, $limit, $search, "id", "asc")->result();
+        $data = $this->DataManipulationModel->getData($table, $limit, $search, "nomor_semester", "desc")->result();
         
         $fields = $this->DataManipulationModel->getTableFieldList($table);
         
@@ -141,6 +141,8 @@ class Data extends CI_Controller{
             "id"=>"",
             "nomor_semester"=>"Nomor Semester Kumulatif",
             "tahun_masuk"=>"Tahun Masuk",
+            "titimangsa_rapor"=>"Titimangsa Penandatanganan",
+            "ganjil"=>"Ganjil/Genap",
             "action"=>"Opsi"
         );
         
@@ -161,8 +163,12 @@ class Data extends CI_Controller{
             "fcaption"=>$field_captions,
             "data"=>$data,
             "table_title"=>"Daftar Semester",
-            "form"=>  ViewAdapter::getFormByTableName($table)
+            "form"=>  ViewAdapter::getFormByTableName($table)            
         );
+        
+        $vwdata["fnmodify"] = function(&$data){
+            $data->ganjil = $data->ganjil == 1?"Ganjil":"Genap";
+        };
         $this->load->view("component/header",array("contain"=>true));
         
         $this->load->view("partial/basic_table",$vwdata);
@@ -299,16 +305,18 @@ class Data extends CI_Controller{
         
         $smt = $this->session->userdata("assign_for_year");
         
-        $query = "SELECT a.*,b.nomor_semester"
+        $query = "SELECT a.*"
                 . " FROM m_kelas a"
-                . " LEFT JOIN m_semester b"
-                . " on a.tahun_masuk = b.tahun_masuk"
-                . " WHERE b.tahun_masuk = ".$smt;
+                . " WHERE a.tahun_masuk = ".$smt;
         
         $dbq = $this->db->query($query);
         
         $fields = $dbq->list_fields();
         $data = $dbq->result();
+        
+        for($i = 0;$i < count($data); $i++){
+            $data[$i]->nama_kelas = getTingkat($data[$i]->nama_kelas, $data[$i]->tahun_masuk);
+        }
         
         $fields = $this->DataManipulationModel->trim_fields($fields);
         
@@ -319,7 +327,7 @@ class Data extends CI_Controller{
             "timestamp"=>"",
             "nama_kelas"=>"Kelas",
             "tahun_masuk"=>"Tahun Masuk",
-            "nomor_semester"=>"Nomor Semester",
+            "nomor_semester"=>"",
             "action"=>"Opsi"
         );
         
@@ -335,8 +343,8 @@ class Data extends CI_Controller{
         }
         
         $qsmt = $this->db
-                ->query("SELECT DISTINCT tahun_masuk FROM m_semester")
-                ->result();
+                ->query("SELECT * FROM m_kelas group by tahun_masuk")
+                ->result();                
         
         $vwdata = array(           
             "datasmt"=>$qsmt,
@@ -390,10 +398,8 @@ class Data extends CI_Controller{
         
         $qkelas = $this->db
                 ->query(
-                        "SELECT a.*,b.nomor_semester"
+                        "SELECT a.*"
                         . " FROM m_kelas a"
-                        . " LEFT JOIN m_semester b"
-                        . " on a.tahun_masuk = b.tahun_masuk"
                         . " WHERE a.id = ".$kid);
         if($qkelas->num_rows() != 1){
             show_custom_error("Jumlah data kelas lebih dari 1");
@@ -428,13 +434,19 @@ class Data extends CI_Controller{
                     );
         }
         
+        $dtsmt = $this->DataManipulationModel->getData("m_semester", null, null, "id", "desc")->result();
+        
+        for($i = 0;$i < count($dtsmt);$i++){
+//            $dtsmt[$i]->nomor_semester = calculateSmt($dtsmt[$i]->tahun_masuk,$dtsmt[$i]->ganjil == 1);
+        }
+        
         $vwdata = array(      
             "datajadwal"=>$jadwal,
             "kelas"=>urlencode(base64_encode($kid)),
-            "kelas_name"=>$dkelas->nama_kelas,
+            "kelas_name"=>  getTingkat($dkelas->nama_kelas, $dkelas->tahun_masuk),
             "smt_now"=>$smt_now,
-            "smt_name"=>$this->session->userdata("assign_for_semester"),
-            "datasmt"=>$this->DataManipulationModel->getData("m_semester", null, null, "id", "desc")->result(),
+            "smt_name"=>$dtsmt[search_where($smt_now, $dtsmt, "id")]->nomor_semester,
+            "datasmt"=>$dtsmt,
             "dataguru"=>$this->DataManipulationModel->getData("m_guru", null, null, "id", "desc")->result(),
             "datamapel"=>$this->DataManipulationModel->getData("m_mata_pelajaran", null, null, "id", "desc")->result()
         );
@@ -488,8 +500,13 @@ class Data extends CI_Controller{
                 ->order_by("tahun_masuk","DESC")
                 ->order_by("nama_kelas","ASC");
                
+        $qkelas = $this->db->get();
         
-        $dkelas = $this->db->get()->result();
+        if($qkelas->num_rows() < 1){
+            show_custom_error("Tidak ada kelas!","Input kelas terlebih dahulu!");
+        }
+        
+        $dkelas = $qkelas->result();
         
         $year_now = intval(date("Y"));
         
@@ -741,7 +758,7 @@ class Data extends CI_Controller{
             $this->session->set_userdata("assignnilai_selection",  base64_decode($this->input->get("k")));
         } 
         $this->db
-             ->select("a.*,b.nama_kelas,b.tahun_masuk,c.nama_mata_pelajaran,d.nomor_semester")
+             ->select("a.*,b.nama_kelas,b.tahun_masuk,c.nama_mata_pelajaran,d.nomor_semester,d.tahun_masuk,d.ganjil")
              ->from("as_assign_guru_kelas a")
              ->join("m_kelas b", "a.id_kelas = b.id","left")
              ->join("m_mata_pelajaran c","a.id_mata_pelajaran = c.id","left")
@@ -750,6 +767,7 @@ class Data extends CI_Controller{
              ->where("id_guru",$this->session->userdata("login_id_user"));
 //        echo $this->db->get_compiled_select();
         $dtassign = $this->db->get();
+        
         
         if($dtassign->num_rows() < 1){
             show_custom_error("Anda tidak memiliki jam mengajar!");
@@ -762,6 +780,10 @@ class Data extends CI_Controller{
         
         $data_assign = $dtassign->result();
         
+        for($i = 0;$i < count($data_assign);$i++){
+            $data_assign[$i]->nomor_semester = calculateSmt($data_assign[$i]->tahun_masuk,$data_assign[$i]->ganjil ==1)." (".$data_assign[$i]->tahun_masuk.")";
+        }
+        
         if($inputclass_selection == null && count($data_assign) > 0){
             $inputclass_selection = $data_assign[0]->id;    
             $inputclass_smtselection = $data_assign[0]->id_semester;
@@ -773,6 +795,11 @@ class Data extends CI_Controller{
                 ->select("*")
                 ->from("m_semester");
         $dtsemester = $this->db->get();
+        
+        $dtsmt = $dtsemester->result();
+        for($i = 0;$i < count($dtsmt);$i++){
+            $dtsmt[$i]->nomor_semester = calculateSmt($dtsmt[$i]->tahun_masuk,$dtsmt[$i]->ganjil == 1)." (".$dtsmt[$i]->tahun_masuk.")";
+        }
         
         if($dtsemester->num_rows() < 1){
             show_custom_error("Tidak ada data semester kumulatif!","Silahkan tambahkan semester kumulatif terlebih dahulu");
@@ -802,7 +829,8 @@ class Data extends CI_Controller{
         
         requery:
         $basequery = "
-            select a.*,b.id as id_siswa, b.nama_siswa, b.kode_identitas, c.nama_kelas,c.tahun_masuk AS angkatan, d.nomor_semester, d.tahun_masuk, e.nilai,e.id as id_nilai 
+            select a.*,b.id as id_siswa, b.nama_siswa, b.kode_identitas, c.nama_kelas,c.tahun_masuk AS angkatan, d.nomor_semester, d.tahun_masuk,d.ganjil, e.nilai,
+            e.deskripsi_nilai, e.nilai_keterampilan,e.deskripsi_nilai_keterampilan,e.id as id_nilai 
             from as_assign_guru_kelas a
             right join m_siswa b on a.id_kelas = b.kelas
             left join m_kelas c on a.id_kelas = c.id
@@ -825,15 +853,19 @@ class Data extends CI_Controller{
         $field_captions["id_nilai"] = "";
         $field_captions["hari"] = "";
         $field_captions["jam"] = "";
+        $field_captions["kkm"] = "";
         $field_captions["timestamp"] = "";
         $field_captions["id_siswa"] = "";
         $field_captions["nama_siswa"] = "Nama Siswa";
         $field_captions["kode_identitas"] = "NIS";
-        $field_captions["nama_kelas"] = "Kelas";
-        $field_captions["nomor_semester"] = "Nomor Semester";
-        $field_captions["tahun_masuk"] = "Tahun Semester";
-        $field_captions["angkatan"] = "Angkatan";
+        $field_captions["nama_kelas"] = "";
+        $field_captions["nomor_semester"] = "Semester";
+        $field_captions["tahun_masuk"] = "";
+        $field_captions["angkatan"] = "";
         $field_captions["nilai"] = "Nilai";
+        $field_captions["nilai_keterampilan"] = "Nilai Keterampilan";
+        $field_captions["deskripsi_nilai"] = "Desk. Nilai Akademik";
+        $field_captions["deskripsi_nilai_keterampilan"] = "Desk. Nilai Keterampilan";        
         
         
         //Check if result is empty, means there is no initial score
@@ -852,6 +884,7 @@ class Data extends CI_Controller{
             foreach($dtsiswa->result() as $dt){
                 $this->db
                     ->set("nilai","0")
+                    ->set("nilai_keterampilan","0")
                     ->set("id_guru",$this->session->userdata("login_id_user"))
                     ->set("id_semester",$inputclass_smtselection)
                     ->set("id_mata_pelajaran",$idmapel)
@@ -864,14 +897,20 @@ class Data extends CI_Controller{
                     
         }
         
+        $dtnilai = $data->result();
+        
+        for($i = 0;$i < count($dtnilai);$i++){
+            $dtnilai[$i]->nomor_semester = calculateSmt($dtnilai[$i]->tahun_masuk,$dtnilai[$i]->ganjil == 1);
+        }
+        
         $vwdata = array();
-        $vwdata["datakelas"] = $dtassign->result();
+        $vwdata["datakelas"] = $data_assign ;
         $vwdata["input_selection"] = $inputclass_selection;
-        $vwdata["semester"] = $dtsemester->result();
+        $vwdata["semester"] = $dtsmt;
         $vwdata["table_title"] = "Nilai Siswa";
         $vwdata["fields"] = $fields;
         $vwdata["fcaption"] = $field_captions;
-        $vwdata["data"] = $data->result();
+        $vwdata["data"] = $dtnilai;
         
         
         $this->load->view("component/header",array("contain"=>true));

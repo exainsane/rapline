@@ -93,19 +93,23 @@ class Home extends CI_Controller{
             
             $data_exist = $this->db->get("m_password_login")->num_rows() == 1;
             
+            $is_wali = $this->db->where("id_guru",$user_info->id)->get("t_assign_wali")->num_rows() > 0;
+            
             if(!$data_exist)
             {                
                 return $this->_login_showpage(true);
             }
             
+            $status_user = $is_wali?FIELD_CODE_GURU_WALI:FIELD_CODE_GURU;
+            
             $vwdata = array(
                 "name"=>$user_info->nama_guru,
                 "id_code"=>$user_info->kode_identitas,
-                "prev_level"=>FIELD_CODE_GURU,
-                "level"=>"Guru"
+                "prev_level"=>$status_user,
+                "level"=>$is_wali?"Guru/Wali Kelas":"Guru"
             );
             
-            $this->_login_set_session($user_info->id, FIELD_CODE_GURU);
+            $this->_login_set_session($user_info->id, $status_user);
             
             return $this->_post_login($vwdata);
         }

@@ -37,6 +37,9 @@ function getUserType(){
         case 99:
             return "SUPERADMIN";
             break;
+        case FIELD_CODE_GURU_WALI:
+            return "Guru/Wali Kelas";
+            break;
         case FIELD_CODE_GURU:
             return "Guru";
             break;
@@ -50,6 +53,9 @@ function getUserLevel(){
 }
 function getUserID(){
     return get_instance()->session->userdata("login_id_user");
+}
+function minUser($type){
+    return getUserLevel() >= $type;
 }
 function isUser($type){
     return getUserLevel() == $type;

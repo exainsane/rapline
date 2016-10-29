@@ -1,7 +1,7 @@
 <form action="<?php echo site_url("data/assignkelas") ?>" method="POST">
 <div class="row">
 	<div class="col s12 l3">
-		<label>Semester</label>
+		<label>Angkatan</label>
 	    <select class="browser-default" name="for_tahun">
 	      <option value="" disabled >Pilih Tahun Angkatan</option>
 	      <?php foreach ($datasmt as $smt): ?>
@@ -20,6 +20,7 @@
 		<tr>
 			<th>No</th>
 		<?php foreach ($fields as $f): ?>
+			<?php if (!isset($fcaption[$f]) || strlen($fcaption[$f]) < 1) continue; ?>						
 			<th><?php echo $fcaption[$f] ?></th>
 		<?php endforeach ?>
 		</tr>	
@@ -27,7 +28,7 @@
 			<tr>
 				<td><?php echo ++$i ?></td>
 				<?php foreach ($fields as $f): ?>
-
+					<?php if (!isset($fcaption[$f]) || strlen($fcaption[$f]) < 1) continue; ?>
 					<?php if ($f == "action" && isset($d->$f)): ?>
 						<td>
 						<?php foreach ($d->$f as $act): ?>

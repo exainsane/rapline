@@ -5,7 +5,7 @@
 	    <select class="browser-default" name="smt">
 	      <option value="" disabled >Pilih Semester</option>
 	      <?php foreach ($datasmt as $smt): ?>
-	      	<option value="<?php echo base64_encode($smt->id) ?>" <?php echo $smt->id == $smt_now?"selected":"" ?>><?php echo $smt->nomor_semester ?></option>
+	      	<option value="<?php echo base64_encode($smt->id) ?>" <?php echo $smt->id == $smt_now?"selected":"" ?>><?php echo $smt->tahun_masuk.($smt->ganjil == 1?" (Ganjil)":" (Genap)") ?></option>
 	      <?php endforeach ?>	      
 	    </select>
 	</div>

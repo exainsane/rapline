@@ -69,7 +69,7 @@ function getUserData(){
         ->select("*")
         ->where("id",$ci->session->userdata("login_id_user"));
         
-    if($ci->session->userdata("login_level") == FIELD_CODE_GURU){
+    if($ci->session->userdata("login_level") == FIELD_CODE_GURU || $ci->session->userdata("login_level") == FIELD_CODE_GURU_WALI){
         $data = $ci->db->get("m_guru");
     }else if($ci->session->userdata("login_level") == FIELD_CODE_SISWA){
         $data = $ci->db->get("m_siswa");
@@ -110,7 +110,8 @@ function show_custom_error($message,$resolve = null){
     $ci->load->view("component/header",array("contain"=>true));
     $ci->load->view("partial/error_notification",$vwdata);
     $ci->load->view("component/footer");
-    
+    $ci->output->_display();
+    exit();
     
 }
 
@@ -157,10 +158,16 @@ function getValueFromDB($table,$fieldname,$id_col,$id_value){
     }
 }
 
-function calculateSmt($thn_masuk){    
+function calculateSmt($thn_masuk,$ganjil = true){    
     $yr_now = intval(date("Y"));
-    
-    $date_masuk = DateTime::createFromFormat("Y-m-d", $thn_masuk."-07-01");
+    $date_masuk = null;
+    if($ganjil == true){
+        $date_masuk = DateTime::createFromFormat("Y-m-d", $thn_masuk."-07-01");
+    }
+    else
+    {
+        $date_masuk = DateTime::createFromFormat("Y-m-d", ($thn_masuk+1)."-01-01");
+    }
     $date_now = new DateTime();
     
     $diff = $date_masuk->diff($date_now);
