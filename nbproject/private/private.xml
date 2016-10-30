@@ -5,9 +5,11 @@
         <group>
             <file>file:/D:/xampp/htdocs/Rapline/application/config/constants.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/config/autoload.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Rapor.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/system/database/DB_result.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/views/partial/view_biodata_siswa.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/models/DataManipulationModel.php</file>
+            <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Actions.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/helpers/permission_helper.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Guru.php</file>
             <file>file:/D:/xampp/htdocs/Rapline/application/controllers/Admin.php</file>

@@ -176,6 +176,7 @@ class Data extends CI_Controller{
         $this->load->view("component/footer");
     }
     function matapelajaran(){
+        //TODO : add form input
         requirePermission(SUPERADMIN_LEVEL);
         $limit = returnDefaultIfNull($this->input->get("show"), 10);
         $search = returnDefaultIfNull($this->input->get("search"), null);        
@@ -201,7 +202,8 @@ class Data extends CI_Controller{
                 
         $field_captions = array(
             "id"=>"",
-            "nama_mata_pelajaran"=>"Nama Mata Pelajaran",            
+            "nama_mata_pelajaran"=>"Nama Mata Pelajaran",       
+            "kelompok"=>"Kelompok Mata Pelajaran",
             "action"=>"Opsi"
         );
         
@@ -237,9 +239,10 @@ class Data extends CI_Controller{
         $this->db->where("id",$id)
                 ->delete("as_assign_guru_kelas");
         
-        redirect(site_url("data/=[/".$kelasid));
+        redirect(site_url("data/assignkelas/".$kelasid));
     }
     function assignkelas($kelasid = null){ 
+        
         requirePermission(FIELD_CODE_GURU_WALI);
         if($this->input->post("for_tahun") == null){
             if($this->session->userdata("assign_for_year") != null){
@@ -376,6 +379,7 @@ class Data extends CI_Controller{
         
         $this->db
                 ->set("id_kelas",$kid)
+                ->set("kkm",$this->input->post("kkm"))
                 ->set("id_semester",$this->session->userdata("assign_for_semester_id"))
                 ->set("hari",$this->input->post("hari_ke"))
                 ->set("jam",$this->input->post("jam_ke"))
@@ -915,6 +919,180 @@ class Data extends CI_Controller{
         
         $this->load->view("component/header",array("contain"=>true));
         $this->load->view("partial/view_inputnilai",$vwdata);
+        $this->load->view("component/footer");
+    }
+    function prakerin(){        
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $_sess_key = "cat_smt";
+        if($this->input->post("kls") != null){
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("kls")));
+        }
+        if($this->session->userdata($_sess_key) == null){
+            $q = $this->db->get("m_semester");
+            if($q->num_rows() < 1){
+                quit("Tidak ada data semester!","Input data semester terlebih dahulu");
+            }
+            
+            $q = $this->db->get_where("t_assign_wali","id_guru = ".getUserID());
+            if($q->num_rows() < 1){
+                quit("Anda tidak memiliki kelas perwalian!","");
+            }
+            
+            $q = $q->result();
+            $q = end($q);
+            $this->session->set_userdata($_sess_key, $q->id);
+        }
+        $current_selection = $this->session->userdata($_sess_key);
+        $qklsw = $this->db
+                ->select("a.*,b.nama_kelas,b.id as kelasid,b.tahun_masuk,c.nomor_semester")
+                ->from("t_assign_wali a")
+                ->join("m_kelas b","a.id_kelas = b.id","LEFT")
+                ->join("m_semester c","a.id_semester = c.id","LEFT")
+                ->where("id_guru",  getUserID())
+                ->get();
+        
+        $dklsw = $qklsw->result();        
+        
+        $assigned = $dklsw[search_where($current_selection, $dklsw, "id")];
+        
+        requery:
+        $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_pkl a"
+                . " right join m_siswa b on a.id_siswa = b.id"
+                . " left join m_kelas c on b.kelas = c.id"
+                . " where id_semester = ".$assigned->id_semester
+                . " and c.id = ".$assigned->id_kelas;
+        $ck = $this->db->query($q);                  
+        
+        $dsiswa = $this->db->get_where("m_siswa","kelas = ".$assigned->id_kelas)->result();
+        
+        $vwdata = array();
+        $vwdata["data"] = $ck->result();
+        $vwdata["dtkelas"] = $dklsw;
+        $vwdata["table_title"] = "Data PRAKERIN ".getTingkat($assigned->nama_kelas, $assigned->tahun_masuk)." Semester ".$assigned->nomor_semester;
+        $vwdata["input_selection"] = $current_selection;
+        $vwdata["assigned"] = $assigned;
+        $vwdata["dtsiswa"] = $dsiswa;
+        
+        $this->load->view("component/header",array("contain"=>true));
+        
+        $this->load->view("partial/view_pkl",$vwdata);
+        
+        $this->load->view("component/footer");
+    }
+    function eskul(){        
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $_sess_key = "cat_smt";
+        if($this->input->post("kls") != null){
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("kls")));
+        }
+        if($this->session->userdata($_sess_key) == null){
+            $q = $this->db->get("m_semester");
+            if($q->num_rows() < 1){
+                quit("Tidak ada data semester!","Input data semester terlebih dahulu");
+            }
+            
+            $q = $this->db->get_where("t_assign_wali","id_guru = ".getUserID());
+            if($q->num_rows() < 1){
+                quit("Anda tidak memiliki kelas perwalian!","");
+            }
+            
+            $q = $q->result();
+            $q = end($q);
+            $this->session->set_userdata($_sess_key, $q->id);
+        }
+        $current_selection = $this->session->userdata($_sess_key);
+        $qklsw = $this->db
+                ->select("a.*,b.nama_kelas,b.id as kelasid,b.tahun_masuk,c.nomor_semester")
+                ->from("t_assign_wali a")
+                ->join("m_kelas b","a.id_kelas = b.id","LEFT")
+                ->join("m_semester c","a.id_semester = c.id","LEFT")
+                ->where("id_guru",  getUserID())
+                ->get();
+        
+        $dklsw = $qklsw->result();        
+        
+        $assigned = $dklsw[search_where($current_selection, $dklsw, "id")];
+        
+        requery:
+        $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_eskul a"
+                . " right join m_siswa b on a.id_siswa = b.id"
+                . " left join m_kelas c on b.kelas = c.id"
+                . " where id_semester = ".$assigned->id_semester
+                . " and c.id = ".$assigned->id_kelas;
+        $ck = $this->db->query($q);                  
+        
+        $dsiswa = $this->db->get_where("m_siswa","kelas = ".$assigned->id_kelas)->result();
+        
+        $vwdata = array();
+        $vwdata["data"] = $ck->result();
+        $vwdata["dtkelas"] = $dklsw;
+        $vwdata["table_title"] = "Data Ekstrakurikuler ".getTingkat($assigned->nama_kelas, $assigned->tahun_masuk)." Semester ".$assigned->nomor_semester;
+        $vwdata["input_selection"] = $current_selection;
+        $vwdata["assigned"] = $assigned;
+        $vwdata["dtsiswa"] = $dsiswa;
+        
+        $this->load->view("component/header",array("contain"=>true));
+        
+        $this->load->view("partial/view_eskul",$vwdata);
+        
+        $this->load->view("component/footer");
+    }    
+    function prestasi(){        
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $_sess_key = "cat_smt";
+        if($this->input->post("kls") != null){
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("kls")));
+        }
+        if($this->session->userdata($_sess_key) == null){
+            $q = $this->db->get("m_semester");
+            if($q->num_rows() < 1){
+                quit("Tidak ada data semester!","Input data semester terlebih dahulu");
+            }
+            
+            $q = $this->db->get_where("t_assign_wali","id_guru = ".getUserID());
+            if($q->num_rows() < 1){
+                quit("Anda tidak memiliki kelas perwalian!","");
+            }
+            
+            $q = $q->result();
+            $q = end($q);
+            $this->session->set_userdata($_sess_key, $q->id);
+        }
+        $current_selection = $this->session->userdata($_sess_key);
+        $qklsw = $this->db
+                ->select("a.*,b.nama_kelas,b.id as kelasid,b.tahun_masuk,c.nomor_semester")
+                ->from("t_assign_wali a")
+                ->join("m_kelas b","a.id_kelas = b.id","LEFT")
+                ->join("m_semester c","a.id_semester = c.id","LEFT")
+                ->where("id_guru",  getUserID())
+                ->get();
+        
+        $dklsw = $qklsw->result();        
+        
+        $assigned = $dklsw[search_where($current_selection, $dklsw, "id")];
+        
+        requery:
+        $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_prestasi a"
+                . " right join m_siswa b on a.id_siswa = b.id"
+                . " left join m_kelas c on b.kelas = c.id"
+                . " where id_semester = ".$assigned->id_semester
+                . " and c.id = ".$assigned->id_kelas;
+        $ck = $this->db->query($q);                  
+        
+        $dsiswa = $this->db->get_where("m_siswa","kelas = ".$assigned->id_kelas)->result();
+        
+        $vwdata = array();
+        $vwdata["data"] = $ck->result();
+        $vwdata["dtkelas"] = $dklsw;
+        $vwdata["table_title"] = "Data Prestasi ".getTingkat($assigned->nama_kelas, $assigned->tahun_masuk)." Semester ".$assigned->nomor_semester;
+        $vwdata["input_selection"] = $current_selection;
+        $vwdata["assigned"] = $assigned;
+        $vwdata["dtsiswa"] = $dsiswa;
+        
+        $this->load->view("component/header",array("contain"=>true));
+        
+        $this->load->view("partial/view_prestasi",$vwdata);
+        
         $this->load->view("component/footer");
     }
 }

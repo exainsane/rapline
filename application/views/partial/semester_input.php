@@ -17,7 +17,7 @@
 	</div>
 	</form>
 	<blockquote><h5>Mata Pelajaran <?php echo $kelas_name ?> Semester <?php echo $smt_name ?></h5></blockquote>
-	<table>
+	<table id="tbjadwal">
 		<tr>
 			<th class="center-align">Jam</th>
 			<th class="center-align">Senin</th>
@@ -71,7 +71,7 @@
 			<div>
 				<label>KKM</label>
 				<div class="input-field">
-					<input type="number" name="kkm">
+					<input type="number" name="kkm" value="70" minlength="0" maxlength="100">
 				</div>			   
 			</div>
 			<div class="row">

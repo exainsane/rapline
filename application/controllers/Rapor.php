@@ -175,8 +175,8 @@ class Rapor extends CI_Controller {
     function catatan_siswa(){
         requirePermission(FIELD_CODE_GURU_WALI);
         $_sess_key = "cat_smt";
-        if($this->input->post("smt") != null){
-            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("smt")));
+        if($this->input->post("kls") != null){
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("klsakunc")));
         }
         if($this->session->userdata($_sess_key) == null){
             $q = $this->db->get("m_semester");
@@ -191,33 +191,68 @@ class Rapor extends CI_Controller {
             
             $q = $q->result();
             $q = end($q);
-            $this->session->set_userdata($q->id);
+            $this->session->set_userdata($_sess_key, $q->id);
         }
-        
+        $current_selection = $this->session->userdata($_sess_key);
         $qklsw = $this->db
-                ->select("a.*,b.nama_kelas,b.id as kelasid,c.nomor_semester")
+                ->select("a.*,b.nama_kelas,b.id as kelasid,b.tahun_masuk,c.nomor_semester")
                 ->from("t_assign_wali a")
                 ->join("m_kelas b","a.id_kelas = b.id","LEFT")
                 ->join("m_semester c","a.id_semester = c.id","LEFT")
-                ->where("id_guru",  getUserID());
+                ->where("id_guru",  getUserID())
+                ->get();
         
-        $dklsw = $qklsw->result();
-        $current_selection = $this->session->userdata($_sess_key);
+        $dklsw = $qklsw->result();        
         
         $assigned = $dklsw[search_where($current_selection, $dklsw, "id")];
         
-        $q = "SELECT a.*,b.deskripsi,b.cat_sikap FROM m_siswa a"
-                . " left join (select * from t_catatan_siswa where id_semester = ".$assigned->id_semester." AND id_guru = ".  getUserID() .") as b"
-                . " on a.id = b.id_siswa"
-                . " where a.kelas = ".$assigned->kelasid;
-        $qdata = $this->db->query($q);
+        requery:
+        $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_catatan_siswa a"
+                . " left join m_siswa b on a.id_siswa = b.id"
+                . " where id_semester = ".$assigned->id_semester
+                . " AND id_guru = ".getUserID();
+        $ck = $this->db->query($q);
+        
+        if($ck->num_rows() < 1){
+            $dsiswa = $this->db->get_where("m_siswa","kelas = ".$assigned->kelasid);
+            foreach ($dsiswa->result() as $siswa){
+                $this->db
+                        ->set("id_siswa",$siswa->id)
+                        ->set("id_guru", getUserID())
+                        ->set("id_semester",$assigned->id_semester)
+                        ->set("deskripsi","(kosong)")
+                        ->set("cat_sikap","(kosong)");
+                $this->db->insert("t_catatan_siswa");
+            }
+            goto requery;
+        }                        
         
         $vwdata = array();
+        $vwdata["data"] = $ck->result();
+        $vwdata["dtkelas"] = $dklsw;
+        $vwdata["table_title"] = "Catatan siswa ".$assigned->nama_kelas." Semester ".$assigned->nomor_semester;
+        $vwdata["input_selection"] = $current_selection;
         
         $this->load->view("component/header",array("contain"=>true));
         
         $this->load->view("partial/view_catatan_siswa",$vwdata);
         
         $this->load->view("component/footer");
+    }
+    
+    function tpg($vwn){
+        $this->load->view("rapor/".$vwn);
+    }
+    
+    function createPDF(){
+        include_once $extlibpath.'Emogrifier.php';
+        include_once $extlibpath.'MPDF56/mpdf.php';    
+
+        $pdf = new mPDF('win-1252','',10,'Arial',5,5,5,5); 
+        $pdf->cacheTables = true;
+        $pdf->simpleTables = true;
+        $pdf->packTableData = true;
+        
+        
     }
 }

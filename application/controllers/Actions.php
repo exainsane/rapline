@@ -15,6 +15,7 @@ class Actions extends CI_Controller{
     }        
     
     function importkelas(){
+        requirePermission(SUPERADMIN_LEVEL);
         $this->load->model("IOModel");
         
         $handle = $this->IOModel->handleDocumentUpload();
@@ -59,6 +60,7 @@ class Actions extends CI_Controller{
         redirect(site_url("data/siswa"));
     }
     function inputnilai(){
+        requirePermission(FIELD_CODE_GURU);
         $posts = $this->input->post(null);
         
         $sel = base64_decode($this->input->post("ins"));
@@ -120,6 +122,150 @@ class Actions extends CI_Controller{
         }        
         
         redirect(site_url("data/inputnilai"));
+    }
+    function cat_siswa_save(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        
+        if($this->input->post("ins") == null){
+            quit("Error processing data!","");
+        }
+        $sel = base64_decode($this->input->post("ins"));
+        
+        $this->db->select("*")
+                ->from("t_assign_wali")
+                ->where("id",$sel);
+        $q = $this->db->get();
+        if($q->num_rows() != 1){
+            quit("Permission denied!", "");
+        }
+        
+        $q = $q->result();
+        $q = end($q);
+        
+        foreach ($this->input->post(null) as $key => $value) {
+            $insert = false;
+            $insid = null;            
+            if(preg_match("/inp-des_./", $key))
+            {                
+                $insid = str_replace("inp-des_", "", $key);                
+                $this->db->set("deskripsi",$value);
+                $insert = true;
+            }
+            if(preg_match("/inp-cat_./", $key))
+            {
+                $insid = str_replace("inp-cat_", "", $key);
+                $this->db->set("cat_sikap",$value);                
+                $insert = true;
+            }
+            
+            if($insert == true){
+                $this->db
+                        ->where("id",$insid)
+                        ->update("t_catatan_siswa");                     
+            }
+        }    
+        
+        redirect(site_url("rapor/catatan_siswa"));
+    }
+    function save_pkl(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        if($this->input->post("smt") == null){
+            quit("Required parameter not found!", "");            
+        }
+        
+        $assignid = base64_decode($this->input->post("smt"));
+        
+        $qassign = $this->db->get_where("t_assign_wali","id = ".$assignid);
+        
+        if ($qassign->num_rows() != 1) {
+            quit("Error on assignment data!", "");
+        }
+        
+        $dassign = $qassign->result();
+        $dassign = end($dassign);
+        
+        $this->db
+                ->set("id_siswa",  base64_decode($this->input->post("siswa")))
+                ->set("id_semester", $dassign->id_semester)
+                ->set("lokasi", $this->input->post("lokasi"))
+                ->set("durasi", $this->input->post("durasi"))
+                ->set("keterangan", $this->input->post("keterangan"));
+        $this->db->insert("t_pkl");
+        
+        redirect(site_url("data/prakerin"));
+    }
+    function del_pkl(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $this->db
+                ->where("id",  base64_decode($this->input->get("d")))
+                ->delete("t_pkl");
+        redirect(site_url("data/prakerin"));
+    }
+    function save_eskul(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        if($this->input->post("smt") == null){
+            quit("Required parameter not found!", "");            
+        }
+        
+        $assignid = base64_decode($this->input->post("smt"));
+        
+        $qassign = $this->db->get_where("t_assign_wali","id = ".$assignid);
+        
+        if ($qassign->num_rows() != 1) {
+            quit("Error on assignment data!", "");
+        }
+        
+        $dassign = $qassign->result();
+        $dassign = end($dassign);
+        
+        $this->db
+                ->set("id_siswa",  base64_decode($this->input->post("siswa")))
+                ->set("id_semester", $dassign->id_semester)
+                ->set("nama_eskul", $this->input->post("nama_eskul"))                
+                ->set("keterangan", $this->input->post("keterangan"));
+        $this->db->insert("t_eskul");
+        
+        redirect(site_url("data/eskul"));
+    }
+    function del_eskul(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $this->db
+                ->where("id",  base64_decode($this->input->get("d")))
+                ->delete("t_eskul");
+        redirect(site_url("data/eskul"));
+    }
+    function save_prestasi(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        if($this->input->post("smt") == null){
+            quit("Required parameter not found!", "");            
+        }
+        
+        $assignid = base64_decode($this->input->post("smt"));
+        
+        $qassign = $this->db->get_where("t_assign_wali","id = ".$assignid);
+        
+        if ($qassign->num_rows() != 1) {
+            quit("Error on assignment data!", "");
+        }
+        
+        $dassign = $qassign->result();
+        $dassign = end($dassign);
+        
+        $this->db
+                ->set("id_siswa",  base64_decode($this->input->post("siswa")))
+                ->set("id_semester", $dassign->id_semester)
+                ->set("nama_prestasi", $this->input->post("nama_prestasi"))                
+                ->set("keterangan", $this->input->post("keterangan"));
+        $this->db->insert("t_prestasi");
+        
+        redirect(site_url("data/prestasi"));
+    }
+    function del_prestasi(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $this->db
+                ->where("id",  base64_decode($this->input->get("d")))
+                ->delete("t_prestasi");
+        redirect(site_url("data/prestasi"));
     }
 }
 

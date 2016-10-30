@@ -185,3 +185,48 @@ function calculateSmt($thn_masuk,$ganjil = true){
     return $l;
     
 }
+
+function predikat($nilai){
+	$nilai = intval($nilai);
+
+	$predikat = "";
+	$konversi = 0;
+
+	if($nilai >= 96 && $nilai <= 100){
+		$predikat = "A";
+		$konversi = 4;
+	}else if($nilai >= 91 && $nilai <= 95){
+		$predikat = "A-";
+		$konversi = 3.67;
+	}else if($nilai >= 85 && $nilai <= 90){
+		$predikat = "B+";
+		$konversi = 3.33;
+	}else if($nilai >= 80 && $nilai <= 84){
+		$predikat = "B";
+		$konversi = 3;
+	}else if($nilai >= 75 && $nilai <= 79){
+		$predikat = "B-";
+		$konversi = 2.67;
+	}else if($nilai >= 70 && $nilai <= 74){
+		$predikat = "C+";
+		$konversi = 2.33;
+	}else if($nilai >= 65 && $nilai <= 69){
+		$predikat = "C-";
+		$konversi = 2;
+	}else if($nilai >= 60 && $nilai <= 64){
+		$predikat = "C-";
+		$konversi = 1.67;
+	}else if($nilai >= 55 && $nilai <= 59){
+		$predikat = "D+";
+		$konversi = 1.33;
+	}else if($nilai >= 0 && $nilai <= 54){
+		$predikat = "D";
+		$konversi = 1;
+	}
+
+	$ret = new StdClass();
+	$ret->predikat = $predikat;
+	$ret->konversi = $konversi;
+
+	return $ret;
+}

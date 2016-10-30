@@ -80,38 +80,7 @@
 .fillarea{
     min-height: 60%;
 }
-td div.jadwal_occupied a{
-    position: absolute;
-    top: 0;
-    right: 0;
-    text-decoration: none;
-    color: white;
-    font-size: 11px;
-    display: block;
-    margin: 3px;
-    padding: 2px;
-    border: 1px solid #c62828;
-    background: #b71c1c ;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px #666;
-    visibility: collapse;
-    opacity: 0;
-    transition: all .3s ease;
-}
-td div.jadwal_occupied:hover a{
-    visibility: visible;
-    opacity: 1;
-}
-td div{
-    display: block;
-    position: relative;
-    margin: 0px auto;
-    padding: 10px;
-    max-width: 250px;
-}
-td div.jadwal_occupied{
-    background: #4caf50;
-}
+
 table [class^="initial-default"] td{
     padding: 0px 5px !important;
 }
@@ -131,4 +100,36 @@ table [class^="initial-default"] th{
 }
 #tbnilai{
     font-size: 13px;
+}
+#tbjadwal td div.jadwal_occupied a{
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-decoration: none;
+    color: white;
+    font-size: 11px;
+    display: block;
+    margin: 3px;
+    padding: 2px;
+    border: 1px solid #c62828;
+    background: #b71c1c ;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px #666;
+    visibility: collapse;
+    opacity: 0;
+    transition: all .3s ease;
+}
+#tbjadwal td div.jadwal_occupied:hover a{
+    visibility: visible;
+    opacity: 1;
+}
+#tbjadwal td div{
+    display: block;
+    position: relative;
+    margin: 0px auto;
+    padding: 10px;
+    max-width: 250px;
+}
+#tbjadwal td div.jadwal_occupied{
+    background: #4caf50;
 }

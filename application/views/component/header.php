@@ -57,7 +57,11 @@
 				<?php endif ?>
 				<?php if (isUser(FIELD_CODE_GURU_WALI)): ?>					
 					<li><a href="<?php echo site_url("data/assignkelas") ?>">Pengisian Jadwal Pengajaran</a></li>					
-					<li><a href="<?php echo site_url("rapor/raporkelas	") ?>">Rapor Kelas Perwalian</a></li>					
+					<li><a href="<?php echo site_url("rapor/raporkelas") ?>">Rapor Kelas Perwalian</a></li>					
+					<li><a href="<?php echo site_url("rapor/catatan_siswa") ?>">Catatan Siswa</a></li>	
+					<li><a href="<?php echo site_url("data/prakerin") ?>">Data PRAKERIN</a></li>	
+					<li><a href="<?php echo site_url("data/eskul") ?>">Data Kegiatan Ekstrakurikuler</a></li>
+					<li><a href="<?php echo site_url("data/prestasi") ?>">Data Prestasi</a></li>
 				<?php endif ?>
 			</ul>
 		</div>
