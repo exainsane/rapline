@@ -203,19 +203,19 @@ class Data extends CI_Controller{
         $field_captions = array(
             "id"=>"",
             "nama_mata_pelajaran"=>"Nama Mata Pelajaran",       
-            "kelompok"=>"Kelompok Mata Pelajaran",
-            "action"=>"Opsi"
+            "kelompok"=>"Kelompok Mata Pelajaran"
         );
         
         $year_now = intval(date("Y"));
         
         for ($i = 0;$i < count($data); $i++){
-            $data[$i]->action = array(
-                array(
-                    "link_caption"=>"Lihat Nilai",
-                    "link"=>  site_url("data/nilaikelas/?mp=".  urlencode(base64_encode($data[$i]->id)))
-                )
-            );
+//            $data[$i]->action = array(
+//                array(
+//                    "link_caption"=>"Lihat Nilai",
+//                    "link"=>  site_url("data/nilaikelas/?mp=".  urlencode(base64_encode($data[$i]->id)))
+//                )
+//            );
+            $data[$i]->kelompok = kelompokMapel($data[$i]->kelompok);
         }
         
         
@@ -223,7 +223,7 @@ class Data extends CI_Controller{
             "fields"=>$fields,
             "fcaption"=>$field_captions,
             "data"=>$data,
-            "table_title"=>"Daftar Kelas",
+            "table_title"=>"Daftar Mata Pelajaran",
             "form"=>  ViewAdapter::getFormByTableName($table)
         );
         $this->load->view("component/header",array("contain"=>true));

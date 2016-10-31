@@ -16,6 +16,18 @@ $(function(){
 	});
 
 	$(".modal-trigger").leanModal();
+	$("#tbl-search").quicksearch("table tr:not(:first-child)",{
+		'hide':function(){
+			$(this).hide(300);
+		},
+		'show':function(){
+			$(this).show(300);
+		}
+	}).keypress(function(e){
+		if(e.which == 13){
+			$(window).scrollTop($("#upper-menu").offset().top + $("#upper-menu").height());
+		}
+	});
 });
 function getPasswordPage(){
 	this.cred_form_input_el = "#frmpst1";

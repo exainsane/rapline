@@ -267,5 +267,54 @@ class Actions extends CI_Controller{
                 ->delete("t_prestasi");
         redirect(site_url("data/prestasi"));
     }
+    function abs_siswa_save(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        
+        if($this->input->post("ins") == null){
+            quit("Error processing data!","");
+        }
+        $sel = base64_decode($this->input->post("ins"));
+        
+        $this->db->select("*")
+                ->from("t_assign_wali")
+                ->where("id",$sel);
+        $q = $this->db->get();
+        if($q->num_rows() != 1){
+            quit("Permission denied!", "");
+        }
+        
+        $q = $q->result();
+        $q = end($q);
+        
+        foreach ($this->input->post(null) as $key => $value) {
+            $insert = false;
+            $insid = null;            
+            if(preg_match("/abs-s-./", $key))
+            {                
+                $insid = str_replace("abs-s-", "", $key);                
+                $this->db->set("sakit",$value);
+                $insert = true;
+            }
+            if(preg_match("/abs-i-./", $key))
+            {
+                $insid = str_replace("abs-i-", "", $key);
+                $this->db->set("izin",$value);                
+                $insert = true;
+            }
+            if(preg_match("/abs-a-./", $key))
+            {
+                $insid = str_replace("abs-a-", "", $key);
+                $this->db->set("alfa",$value);                
+                $insert = true;
+            }
+            if($insert == true){
+                $this->db
+                        ->where("id",$insid)
+                        ->update("t_rekap_absensi");                     
+            }
+        }    
+        
+        redirect(site_url("rapor/absensi"));
+    }
 }
 

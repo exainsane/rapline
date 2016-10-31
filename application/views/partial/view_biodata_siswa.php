@@ -65,10 +65,11 @@
 				</div>
 				<div class="col s12 l6">
 					<div class="card">				
-						<div class="input-field"> 
-							<input value="<?php echo getValue("photo",$data) ?>" placeholder="input Photo" id="photo-field" type="file" name="photo" class="validate"> 
-							<label for="photo-field">Photo</label> 
-						</div>				
+						<div class="input-field" style="margin:10px 0px 30px">
+							<span for="">Foto</span>
+					     	<input type="file" name="photo" />
+					     	
+					    </div>			
 						<div class="input-field"> 
 							<input value="<?php echo getValue("email",$data) ?>" placeholder="input Email" id="email-field" type="text" name="email" class="validate"> 
 							<label for="email-field">Email</label> 

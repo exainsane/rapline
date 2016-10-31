@@ -143,9 +143,9 @@ function getTingkat($kelas, $tahun_masuk){
     return $kelas;
 }
 
-function getValueFromDB($table,$fieldname,$id_col,$id_value){
+function getValueFromDB($table,$fieldname = null,$id_col,$id_value){
     $ci =& get_instance();    
-    $ci->db->select($fieldname)->from($table)
+    $ci->db->select(($fieldname == null?"*":$fieldname))->from($table)
             ->where($id_col,$id_value);
     $q = $ci->db->get();
     
@@ -154,7 +154,7 @@ function getValueFromDB($table,$fieldname,$id_col,$id_value){
     else{
         $q = $q->result();
         $q = end($q);
-        return $q->$fieldname;
+        return $fieldname == null?$q:$q->$fieldname;
     }
 }
 
@@ -185,7 +185,22 @@ function calculateSmt($thn_masuk,$ganjil = true){
     return $l;
     
 }
-
+function kelompokMapel($kd){
+    if($kd == MAPEL_KELOMPOK_A)
+    {
+        return "Kelompok A";
+    }
+    elseif($kd == MAPEL_KELOMPOK_B)
+    {
+        return "Kelompok B";
+    }
+    elseif($kd == MAPEL_KELOMPOK_C)
+    {
+        return "Kelompok C";
+    }
+    
+    return "Tidak dikelompokkan";
+}
 function predikat($nilai){
 	$nilai = intval($nilai);
 

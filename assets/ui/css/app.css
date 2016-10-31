@@ -133,3 +133,22 @@ table [class^="initial-default"] th{
 #tbjadwal td div.jadwal_occupied{
     background: #4caf50;
 }
+#iabsensi td input{
+    width: 50px;
+}
+#iabsensi td{
+    padding: 0!important;
+}
+#tbl-search{
+    border:none;
+    width: 75px;
+    height: 30px;
+    transition:all .3s ease;
+    padding-left: 8px;
+}
+#tbl-search:focus{
+    border-radius: 5px;
+    width: 150px;
+    background: #efefef;
+    color:black;
+}

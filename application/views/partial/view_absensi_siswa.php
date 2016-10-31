@@ -1,5 +1,5 @@
 <div class="col s12 filler">
-	<form action="<?php echo site_url("rapor/catatan_siswa") ?>" method="POST">
+	<form action="<?php echo site_url("rapor/absensi") ?>" method="POST">
 	<div class="row">
 		<div class="col s12 l3">
 			<label>Kelas</label>
@@ -17,30 +17,25 @@
 	</div>
 	</form>
 	<blockquote class="border-blue"><h5><?php echo $table_title ?></h5></blockquote>
-	<form action="<?php echo site_url("actions/cat_siswa_save") ?>" method="POST" id="frm">
+	<form action="<?php echo site_url("actions/abs_siswa_save") ?>" method="POST" id="frm">
 		<input type="hidden" name="ins" value="<?php echo base64_encode($input_selection) ?>">
 		<table class="basic_table striped" id="">
 			<tr>
 				<th>No</th>
 				<th>Nama Siswa</th>				
 				<th>NIS</th>
-				<th>Catatan</th>
+				<th>Sakit</th>
+				<th>Izin</th>
+				<th>Alfa</th>
 			</tr>
 			<?php $i=1;foreach ($data as $d): ?>
-				<tr>
+				<tr id="iabsensi">
 					<td><?php echo $i++ ?></td>
 					<td><strong><?php echo $d->nama_siswa ?></strong></td>
-					<td><?php echo $d->kode_identitas ?></td>			
-					<td>
-						<div class="input-field">
-							<textarea style="max-width:auto!important" name="inp-des_<?php echo $d->id ?>" id="" cols="30" rows="10" class="materialize-textarea"><?php echo $d->deskripsi ?></textarea>
-							<label for="">Deskripsi Siswa</label>
-						</div>
-						<div class="input-field">
-							<textarea style="max-width:auto!important" name="inp-cat_<?php echo $d->id ?>" id="" cols="30" rows="10" class="materialize-textarea"><?php echo $d->cat_sikap ?></textarea>
-							<label for="">Catatan Wali Kelas</label>
-						</div>
-					</td>
+					<td><?php echo $d->kode_identitas ?></td>
+					<td><input type="number" name="abs-s-<?php echo $d->id ?>" value="<?php echo $d->sakit ?>"></td>
+					<td><input type="number" name="abs-i-<?php echo $d->id ?>" value="<?php echo $d->izin ?>"></td>
+					<td><input type="number" name="abs-a-<?php echo $d->id ?>" value="<?php echo $d->alfa ?>"></td>
 				</tr>
 			<?php endforeach ?>
 		</table>

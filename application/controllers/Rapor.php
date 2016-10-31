@@ -176,7 +176,7 @@ class Rapor extends CI_Controller {
         requirePermission(FIELD_CODE_GURU_WALI);
         $_sess_key = "cat_smt";
         if($this->input->post("kls") != null){
-            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("klsakunc")));
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("kls")));
         }
         if($this->session->userdata($_sess_key) == null){
             $q = $this->db->get("m_semester");
@@ -209,7 +209,7 @@ class Rapor extends CI_Controller {
         requery:
         $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_catatan_siswa a"
                 . " left join m_siswa b on a.id_siswa = b.id"
-                . " where id_semester = ".$assigned->id_semester
+                . " where id_semester = ".$assigned->id_semester                
                 . " AND id_guru = ".getUserID();
         $ck = $this->db->query($q);
         
@@ -239,7 +239,75 @@ class Rapor extends CI_Controller {
         
         $this->load->view("component/footer");
     }
-    
+    function absensi(){
+        requirePermission(FIELD_CODE_GURU_WALI);
+        $_sess_key = "abs_smt";
+        if($this->input->post("kls") != null){
+            $this->session->set_userdata($_sess_key, base64_decode($this->input->post("klsakunc")));
+        }
+        if($this->session->userdata($_sess_key) == null){
+            $q = $this->db->get("m_semester");
+            if($q->num_rows() < 1){
+                quit("Tidak ada data semester!","Input data semester terlebih dahulu");
+            }
+            
+            $q = $this->db->get_where("t_assign_wali","id_guru = ".getUserID());
+            if($q->num_rows() < 1){
+                quit("Anda tidak memiliki kelas perwalian!","");
+            }
+            
+            $q = $q->result();
+            $q = end($q);
+            $this->session->set_userdata($_sess_key, $q->id);
+        }
+        $current_selection = $this->session->userdata($_sess_key);
+        $qklsw = $this->db
+                ->select("a.*,b.nama_kelas,b.id as kelasid,b.tahun_masuk,c.nomor_semester")
+                ->from("t_assign_wali a")
+                ->join("m_kelas b","a.id_kelas = b.id","LEFT")
+                ->join("m_semester c","a.id_semester = c.id","LEFT")
+                ->where("id_guru",  getUserID())
+                ->get();
+        
+        $dklsw = $qklsw->result();        
+        
+        $assigned = $dklsw[search_where($current_selection, $dklsw, "id")];
+        
+        requery:
+        $q = "SELECT a.*,b.nama_siswa,b.kode_identitas FROM t_rekap_absensi a"
+                . " left join m_siswa b on a.id_siswa = b.id"
+                . " where id_semester = ".$assigned->id_semester
+                . " AND b.kelas = ".$assigned->kelasid
+                . " AND id_guru = ".getUserID();
+        $ck = $this->db->query($q);
+        
+        if($ck->num_rows() < 1){
+            $dsiswa = $this->db->get_where("m_siswa","kelas = ".$assigned->kelasid);
+            foreach ($dsiswa->result() as $siswa){
+                $this->db
+                        ->set("id_siswa",$siswa->id)
+                        ->set("id_guru", getUserID())
+                        ->set("id_semester",$assigned->id_semester)
+                        ->set("alfa","0")
+                        ->set("izin","0")
+                        ->set("sakit","0");
+                $this->db->insert("t_rekap_absensi");
+            }
+            goto requery;
+        }                        
+        
+        $vwdata = array();
+        $vwdata["data"] = $ck->result();
+        $vwdata["dtkelas"] = $dklsw;
+        $vwdata["table_title"] = "Rekap Absensi Siswa ".$assigned->nama_kelas." Semester ".$assigned->nomor_semester;
+        $vwdata["input_selection"] = $current_selection;
+        
+        $this->load->view("component/header",array("contain"=>true));
+        
+        $this->load->view("partial/view_absensi_siswa",$vwdata);
+        
+        $this->load->view("component/footer");
+    }
     function tpg($vwn){
         $this->load->view("rapor/".$vwn);
     }
