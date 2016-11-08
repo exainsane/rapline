@@ -12,7 +12,7 @@
 				margin: 0px auto;
 			}
 			#content table{
-				width: auto;
+				width: 900px;
 				margin: 0px auto;				
 			}
 			#content table td:nth-child(2){

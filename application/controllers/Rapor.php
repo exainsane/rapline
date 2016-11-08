@@ -313,14 +313,34 @@ class Rapor extends CI_Controller {
     }
     
     function createPDF(){
-        include_once $extlibpath.'Emogrifier.php';
+        $extlibpath = "./assets/extlib/";
+        
+//        include_once $extlibpath.'Emogrifier.php';
         include_once $extlibpath.'MPDF56/mpdf.php';    
 
-        $pdf = new mPDF('win-1252','',10,'Arial',5,5,5,5); 
-        $pdf->cacheTables = true;
-        $pdf->simpleTables = true;
-        $pdf->packTableData = true;
+        $pdf = new mPDF('win-1252','',12,'Times New Roman',15,15,15,15); 
+//        $pdf->cacheTables = true;
+//        $pdf->simpleTables = true;
+//        $pdf->packTableData = true;
+        
+        $pdf->FontSizePt = 14;
+        $pdf->keep_table_proportions=true;
+        //$pdf->shrink_tables_to_fit=1;
+        $pdf->use_kwt = true;
+        $pdf->allow_charset_conversion = true;
+        $pdf->charset_in = "UTF-8";
         
         
+        $pdf->WriteHTML(($this->load->view("rapor/cover_detilsekolah",'',true)));
+        
+        $pdf->AddPage("P");
+        
+        $pdf->writeHTML(($this->load->view("rapor/cover_detilsiswa",'',true)));
+        
+        $pdf->AddPage("L");
+        
+        $pdf->writeHTML(($this->load->view("rapor/rapor_content",'',true)));
+        
+        $pdf->Output();
     }
 }

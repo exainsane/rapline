@@ -56,38 +56,52 @@
 <div class="modal" id="form" style="padding:10px">
 	<div class="modal-content">
 		<blockquote style="border-color:#304ffe"><h5>Import Data Siswa</h5></blockquote>
-		<table>
-			<tr>
-				<td>Kelas</td>
-				<td>:</td>
-				<td><b><?php echo $kelas_now ?></b></td>
-			</tr>
-			<tr>
-				<td>Tahun Masuk</td>
-				<td>:</td>
-				<td>
-					<select name="tahun_masuk" required class="browser-default">
-						<option value="" disabled="true">Pilih tahun masuk</option>
-						<?php for ($i = intval(date("Y"))-3;$i < intval(date("Y"))+3;$i++ ): ?>
-							<option value="<?php echo $i ?>"><?php echo $i ?></option>
-						<?php endfor ?>
-					</select>
-				</td>
-			</tr>
-		</table>
 		<form action="<?php echo site_url("actions/importkelas/") ?>" method="POST" enctype="multipart/form-data">			
 			<input type="hidden" name="is_input" value="true">
 			<input type="hidden" name="kelas" value="<?php echo $kelas_id ?>">
-			<div class="file-field input-field">
-		      <input class="file-path validate" type="text"/>
-		      <div class="btn indigo">
-		        <span>Select File (.xlsx ONLY)</span>
-		        <input type="file" name="doc" />
-		      </div>
-		    </div>
-		    <br>
-		    <br>
-			<button class="right btn red darken-3">Upload</button>		
+			<table>
+				<tr>
+					<td>Kelas</td>
+					<td>:</td>
+					<td><b><?php echo $kelas_now ?></b></td>
+				</tr>
+				<tr>
+					<td>Tahun Masuk</td>
+					<td>:</td>
+					<td>
+						<select name="tahun_masuk" required class="browser-default">
+							<option value="" disabled="true">Pilih tahun masuk</option>
+							<?php for ($i = intval(date("Y"))-3;$i < intval(date("Y"))+3;$i++ ): ?>
+								<option value="<?php echo $i ?>"><?php echo $i ?></option>
+							<?php endfor ?>
+						</select>
+					</td>
+				</tr>
+			</table>
+			
+				<div class="file-field input-field">
+			      <input class="file-path validate" type="text"/>
+			      <div class="btn indigo">
+			        <span>Select File (.xlsx ONLY)</span>
+			        <input type="file" name="doc" />
+			      </div>
+			    </div>
+			    <br>
+			    <br>
+				<button class="right btn red darken-3">Upload</button>		
 		</form>
+		<h5>Petunjuk upload data siswa</h5>
+		<div id="upload-siswa-hint-wrapper">
+			<ol>
+				<li>Format file yang dapat digunakan adalah file Excel format 2007 keatas dengan extensi <b>.xlsx</b></li>
+				<li>Data siswa yang di upload harus berada pada sheet 1/sheet pertama</li>
+				<li>
+					Kolom dalam file <b>xlsx</b> harus sesuai dengan urutan berikut yaitu <b><i>NIS</i> - <i>Nama</i> - <i>Jenis Kelamin</i></b><br>
+					<b>TANPA HEADER/JUDUL KOLOM</b><br>
+					<img style="width:100%;height:auto" src="<?php echo base_url("assets/images/content/help-upload.png") ?>" alt="">
+				</li>
+			</ol>
+
+		</div>
 	</div>
 </div>
